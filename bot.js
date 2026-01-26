@@ -1,31 +1,45 @@
-const TOKEN = "ВСТАВЬ_СЮДА_НОВЫЙ_ТОКЕН";
-const CHAT_ID = "ВСТАВИМ_ПОТОМ";
+// AtlasFlow → Telegram sender
+
+const TOKEN = "ВСТАВЬ_СЮДА_СВОЙ_ТОКЕН";
+const CHAT_ID = "ВСТАВЬ_СЮДА_CHAT_ID";
 
 async function sendToTelegram(text) {
-  const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
-  await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      chat_id: CHAT_ID,
-      text: text,
-      parse_mode: "HTML"
-    })
-  });
+    const url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+
+    await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: text,
+            parse_mode: "HTML"
+        })
+    });
 }
 
-window.sendFormToTelegram = async function(formData) {
-  const message = `
-<b>New AtlasFlow Request</b>
+// Перехватываем форму
+document.getElementById("quoteForm").addEventListener("submit", function(e){
+    e.preventDefault();
 
-<b>Name:</b> ${formData.name}
-<b>Contact:</b> ${formData.contact}
-<b>Route:</b> ${formData.route}
-<b>Cargo:</b> ${formData.cargo}
+    const name = document.getElementById("name").value.trim();
+    const contact = document.getElementById("contact").value.trim();
+    const route = document.getElementById("route").value.trim();
+    const cargo = document.getElementById("cargo").value.trim();
+    const details = document.getElementById("details").value.trim();
+
+    const message = `
+<b>🚚 New AtlasFlow Request</b>
+
+<b>Name:</b> ${name}
+<b>Contact:</b> ${contact}
+<b>Route:</b> ${route}
+<b>Cargo:</b> ${cargo}
 
 <b>Details:</b>
-${formData.details}
+${details || "-"}
 `;
 
-  await sendToTelegram(message);
-};
+    sendToTelegram(message);
+
+    alert("Request sent! We will contact you shortly.");
+});
