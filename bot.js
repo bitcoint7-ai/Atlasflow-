@@ -1,6 +1,5 @@
 // AtlasFlow → Telegram sender
 
-const TOKEN = "8358774962:AAHMBGy1XHtARPnEl4RjnQhaC2lPPo3cI2Y";
 const CHAT_ID = "368362132";
 
 async function sendToTelegram(text) {
