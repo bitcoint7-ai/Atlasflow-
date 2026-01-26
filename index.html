@@ -386,29 +386,29 @@
     document.getElementById("y").textContent = new Date().getFullYear();
 
     // Quote form -> opens email draft (mailto)
-    document.getElementById("quoteForm").addEventListener("submit", function(e){
-      e.preventDefault();
+    document.getElementById("quoteForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
 
-      const name = document.getElementById("name").value.trim();
-      const contact = document.getElementById("contact").value.trim();
-      const route = document.getElementById("route").value.trim();
-      const cargo = document.getElementById("cargo").value.trim();
-      const details = document.getElementById("details").value.trim();
+  const name = document.getElementById("name").value.trim();
+  const contact = document.getElementById("contact").value.trim();
+  const route = document.getElementById("route").value.trim();
+  const cargo = document.getElementById("cargo").value.trim();
+  const details = document.getElementById("details").value.trim();
 
-      const subject = encodeURIComponent(`Quote request — ${route} (${cargo})`);
-      const body = encodeURIComponent(
-`Name: ${name}
-Contact: ${contact}
-Route: ${route}
-Cargo: ${cargo}
+  await fetch("https://black-cherry-5465.bitcoin7.workers.dev", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name,
+      contact,
+      route,
+      cargo,
+      details
+    })
+  });
 
-Details:
-${details || "-"}
-`
-      );
-
-      window.location.href = `mailto:info@atlasflow.org?subject=${subject}&body=${body}`;
-    });
+  alert("Request sent! We will contact you shortly.");
+});
   </script>
   ...
     </section>
