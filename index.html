@@ -1,79 +1,414 @@
-<!DOCTYPE html><html lang="en">
+<!doctype html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AtlasFlow — Global Logistics Flow</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AtlasFlow — Logistics between China, Thailand & EU</title>
+  <meta name="description" content="AtlasFlow coordinates sourcing, consolidation and cross-border delivery between China, Thailand and the European Union. Fast quotes via WhatsApp, Telegram or email." />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0b1220" />
+
+  <!-- Optional: add favicon later (favicon.ico in repo root) -->
+  <!-- <link rel="icon" href="/favicon.ico"> -->
+
   <style>
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #0b0f14;
-      color: #e6edf3;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
+    :root{
+      --bg:#070a12;
+      --card:rgba(255,255,255,.06);
+      --card2:rgba(255,255,255,.08);
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --line:rgba(255,255,255,.10);
+      --accent:#2d6cff;
+      --accent2:#7aa2ff;
+      --shadow:0 30px 120px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:26px;
     }
-    .card {
-      max-width: 720px;
-      padding: 48px;
-      background: #121821;
-      border-radius: 16px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(1200px 600px at 50% 70%, rgba(45,108,255,.18), transparent 60%),
+        radial-gradient(900px 500px at 20% 20%, rgba(122,162,255,.12), transparent 60%),
+        radial-gradient(900px 500px at 80% 10%, rgba(45,108,255,.10), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px 16px;
     }
-    h1 {
-      font-weight: 600;
-      font-size: 36px;
-      margin-bottom: 12px;
-      letter-spacing: 1px;
+    a{color:inherit}
+    .wrap{
+      width:min(1020px, 100%);
+      display:grid;
+      gap:18px;
     }
-    p {
-      font-weight: 300;
-      font-size: 18px;
-      line-height: 1.6;
-      margin: 16px 0;
-      color: #9fb3c8;
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+      border-radius:var(--radius2);
+      box-shadow:var(--shadow);
+      padding:34px 22px;
     }
-    .btn {
-      display: inline-block;
-      margin-top: 28px;
-      padding: 14px 28px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 500;
-      background: #1f6feb;
-      color: white;
-      transition: 0.2s ease;
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background:
+        radial-gradient(600px 280px at 30% 20%, rgba(45,108,255,.28), transparent 60%),
+        radial-gradient(600px 280px at 75% 55%, rgba(122,162,255,.20), transparent 60%);
+      filter: blur(14px);
+      opacity:.55;
+      pointer-events:none;
     }
-    .btn:hover {
-      background: #388bfd;
+    .hero > *{position:relative}
+    .top{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
     }
-    .links {
-      margin-top: 32px;
-      font-size: 14px;
-      color: #6e859e;
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
     }
-    .links a {
-      color: #6e859e;
-      text-decoration: none;
-      margin: 0 8px;
+    .mark{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(145deg, rgba(45,108,255,.95), rgba(122,162,255,.75));
+      box-shadow:0 18px 40px rgba(45,108,255,.22);
+      display:grid;place-items:center;
+      border:1px solid rgba(255,255,255,.18);
+      flex:0 0 auto;
+    }
+    .mark svg{opacity:.95}
+    .brand h1{
+      margin:0;
+      font-size:28px;
+      letter-spacing:.3px;
+      line-height:1.1;
+    }
+    .tag{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .pillrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .pill{
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.18);
+      padding:8px 12px;
+      border-radius:999px;
+      color:var(--muted);
+      font-size:13px;
+      display:flex;gap:8px;align-items:center;
+    }
+    .pill b{color:var(--text); font-weight:600}
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:16px;
+    }
+    @media (max-width: 860px){
+      .grid{grid-template-columns:1fr}
+    }
+    .left h2{
+      margin:14px 0 10px;
+      font-size:34px;
+      line-height:1.12;
+      letter-spacing:.2px;
+    }
+    .left p{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.6;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .btn{
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      transition:transform .12s ease, background .12s ease, border-color .12s ease;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      background:rgba(255,255,255,.08);
+      border-color:rgba(255,255,255,.22);
+    }
+    .btn.primary{
+      background:linear-gradient(145deg, rgba(45,108,255,.95), rgba(45,108,255,.72));
+      border-color:rgba(122,162,255,.45);
+      box-shadow:0 22px 60px rgba(45,108,255,.22);
+    }
+    .btn.primary:hover{
+      background:linear-gradient(145deg, rgba(45,108,255,1), rgba(45,108,255,.78));
+    }
+    .card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:var(--radius);
+      padding:16px;
+    }
+    .card h3{
+      margin:0 0 10px;
+      font-size:16px;
+      letter-spacing:.2px;
+    }
+    .list{
+      display:grid;
+      gap:10px;
+      margin:0;
+      padding:0;
+      list-style:none;
+    }
+    .li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border-radius:14px;
+      background:rgba(0,0,0,.16);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;
+      background:rgba(122,162,255,.9);
+      box-shadow:0 0 0 6px rgba(122,162,255,.12);
+      margin-top:5px;
+      flex:0 0 auto;
+    }
+    .li b{display:block; font-size:14px}
+    .li span{display:block; color:var(--muted2); font-size:13px; margin-top:3px; line-height:1.35}
+    .subgrid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+    @media (max-width: 860px){
+      .subgrid{grid-template-columns:1fr}
+    }
+    .quote{
+      border:1px solid rgba(122,162,255,.22);
+      background:linear-gradient(180deg, rgba(122,162,255,.12), rgba(255,255,255,.05));
+      border-radius:var(--radius);
+      padding:16px;
+    }
+    .quote p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.55;
+      font-size:14px;
+    }
+    form{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    input, textarea, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    textarea{min-height:96px; resize:vertical}
+    .row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 560px){
+      .row{grid-template-columns:1fr}
+    }
+    .fine{
+      margin-top:10px;
+      color:rgba(234,240,255,.5);
+      font-size:12px;
+      line-height:1.4;
+    }
+    footer{
+      text-align:center;
+      color:rgba(234,240,255,.45);
+      font-size:12px;
+      padding:10px 0 0;
+    }
+    .sep{
+      height:1px;background:rgba(255,255,255,.10);
+      margin:14px 0;
     }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <h1>AtlasFlow</h1>
-    <p>Global logistics flow between China, EU & Thailand.</p>
-    <p>We coordinate sourcing, consolidation, and delivery across borders with precision and reliability.</p><a class="btn" href="mailto:info@atlasflow.org">Contact: info@atlasflow.org</a>
+  <main class="wrap">
+    <section class="hero">
+      <div class="top">
+        <div class="brand">
+          <div class="mark" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2l8.5 4.7v10.6L12 22l-8.5-4.7V6.7L12 2z" stroke="rgba(255,255,255,.92)" stroke-width="1.6"/>
+              <path d="M12 2v20" stroke="rgba(255,255,255,.6)" stroke-width="1.2" opacity=".7"/>
+              <path d="M3.5 6.7L12 11.5l8.5-4.8" stroke="rgba(255,255,255,.6)" stroke-width="1.2" opacity=".7"/>
+            </svg>
+          </div>
+          <div>
+            <h1>AtlasFlow</h1>
+            <div class="tag">Cross-border logistics between China, Thailand & EU</div>
+          </div>
+        </div>
 
-<div class="links">
-  <a href="#">WhatsApp</a> ·
-  <a href="#">Telegram</a> ·
-  <a href="mailto:info@atlasflow.org">Email</a>
-</div>
+        <div class="pillrow">
+          <div class="pill"><b>Fast quotes</b> in 15–30 min</div>
+          <div class="pill"><b>Consolidation</b> & documentation</div>
+          <div class="pill"><b>Door-to-Door</b> options</div>
+        </div>
+      </div>
 
-  </div>
+      <div class="grid">
+        <div class="left">
+          <h2>Move cargo with clarity — from factory to final delivery.</h2>
+          <p>
+            We coordinate sourcing, consolidation, and delivery across borders.
+            Clear timelines, transparent costs, and reliable communication — built for small and mid-size shipments.
+          </p>
+
+          <div class="actions">
+            <a class="btn primary" href="#quote">Request a quote</a>
+
+            <!-- Replace WHATSAPP_NUMBER (format: countrycode+number, no + sign), example: 491234567890 -->
+            <a class="btn" id="waBtn" href="https://wa.me/WHATSAPP_NUMBER" target="_blank" rel="noopener">WhatsApp</a>
+
+            <!-- Replace TELEGRAM_USERNAME (without @), example: atlasflow_support -->
+            <a class="btn" id="tgBtn" href="https://t.me/TELEGRAM_USERNAME" target="_blank" rel="noopener">Telegram</a>
+
+            <a class="btn" href="mailto:info@atlasflow.org">Email: info@atlasflow.org</a>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="subgrid">
+            <div class="card">
+              <h3>Routes we cover</h3>
+              <ul class="list">
+                <li class="li"><span class="dot"></span><div><b>China → Thailand</b><span>Factory pickup, consolidation, customs assistance, last-mile delivery.</span></div></li>
+                <li class="li"><span class="dot"></span><div><b>Thailand → EU</b><span>Export support, documents, shipping coordination, delivery to EU address.</span></div></li>
+                <li class="li"><span class="dot"></span><div><b>China → EU</b><span>Consolidation and direct lines depending on cargo and timeline.</span></div></li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h3>Services</h3>
+              <ul class="list">
+                <li class="li"><span class="dot"></span><div><b>Consolidation</b><span>Combine multiple suppliers into one shipment.</span></div></li>
+                <li class="li"><span class="dot"></span><div><b>Documentation</b><span>Invoices, packing lists, labeling guidance.</span></div></li>
+                <li class="li"><span class="dot"></span><div><b>Tracking & updates</b><span>Clear status and simple communication.</span></div></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <aside class="quote" id="quote">
+          <h3 style="margin:0 0 8px;font-size:16px;">Request a quote</h3>
+          <p>Send details and we’ll respond with options & pricing. No spam.</p>
+
+          <form id="quoteForm">
+            <div class="row">
+              <input id="name" type="text" placeholder="Your name" required />
+              <input id="contact" type="text" placeholder="WhatsApp / Email" required />
+            </div>
+
+            <div class="row">
+              <select id="route" required>
+                <option value="" disabled selected>Select route</option>
+                <option>China → Thailand</option>
+                <option>Thailand → EU</option>
+                <option>China → EU</option>
+                <option>Other / Not sure</option>
+              </select>
+              <select id="cargo" required>
+                <option value="" disabled selected>Cargo type</option>
+                <option>Boxes / parcels</option>
+                <option>Pallets</option>
+                <option>Samples</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <textarea id="details" placeholder="Details: origin city, destination, weight/volume, deadlines, links/photos if any"></textarea>
+
+            <button class="btn primary" type="submit">Send request</button>
+            <div class="fine">
+              By sending, you agree we may contact you to clarify shipment details.
+            </div>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <footer>
+      © <span id="y"></span> AtlasFlow • info@atlasflow.org
+    </footer>
+  </main>
+
+  <script>
+    // Year
+    document.getElementById("y").textContent = new Date().getFullYear();
+
+    // Quote form -> opens email draft (mailto)
+    document.getElementById("quoteForm").addEventListener("submit", function(e){
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const contact = document.getElementById("contact").value.trim();
+      const route = document.getElementById("route").value.trim();
+      const cargo = document.getElementById("cargo").value.trim();
+      const details = document.getElementById("details").value.trim();
+
+      const subject = encodeURIComponent(`Quote request — ${route} (${cargo})`);
+      const body = encodeURIComponent(
+`Name: ${name}
+Contact: ${contact}
+Route: ${route}
+Cargo: ${cargo}
+
+Details:
+${details || "-"}
+`
+      );
+
+      window.location.href = `mailto:info@atlasflow.org?subject=${subject}&body=${body}`;
+    });
+  </script>
 </body>
 </html>
