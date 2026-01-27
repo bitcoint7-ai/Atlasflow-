@@ -1,141 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>AtlasFlow — Global Logistics</title>
+<title>AtlasFlow — VIP Global Logistics</title>
 
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif}
-html{scroll-behavior:smooth}
-
+/* =========================
+   VIP / Luxury Design System
+========================= */
+*{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg0:#06121a;
-  --bg1:#071822;
-  --bg2:#061018;
+  --bg0:#050b12;
+  --bg1:#07131c;
+  --bg2:#03070c;
 
-  --glass: rgba(255,255,255,.055);
-  --glass2: rgba(255,255,255,.085);
-  --line: rgba(255,255,255,.10);
+  --white:#ffffff;
+  --muted:rgba(255,255,255,.78);
+  --muted2:rgba(255,255,255,.64);
 
-  --title:#ffffff;
-  --muted: rgba(255,255,255,.80);
-  --muted2: rgba(255,255,255,.72);
+  --glass:rgba(255,255,255,.06);
+  --glass2:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.10);
+  --line2:rgba(255,255,255,.06);
 
-  --accent: rgba(235,255,255,.95);
-  --accent2: rgba(170,235,255,.72);
+  --accent:rgba(255,255,255,.92);
+  --accentSoft:rgba(200,235,255,.55);
+  --aqua:rgba(130,210,255,.40);
+
+  --shadow: 0 24px 90px rgba(0,0,0,.45);
+  --shadow2: 0 14px 50px rgba(0,0,0,.35);
+
+  --r:24px;
+  --r2:18px;
+  --max:1200px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
 }
-
+html{scroll-behavior:smooth}
 body{
-  color:#fff;
+  font-family:var(--font);
+  color:var(--white);
   overflow-x:hidden;
+
   background:
-    radial-gradient(1200px 720px at 12% 18%, rgba(140,210,255,.08), transparent 62%),
-    radial-gradient(900px 620px at 88% 78%, rgba(110,170,210,.06), transparent 65%),
+    radial-gradient(1200px 700px at 18% 18%, rgba(160,220,255,.10), transparent 60%),
+    radial-gradient(900px 600px at 85% 75%, rgba(120,200,255,.07), transparent 62%),
+    radial-gradient(700px 500px at 50% 110%, rgba(255,255,255,.04), transparent 65%),
     linear-gradient(135deg, var(--bg0), var(--bg1), var(--bg2));
 }
 
-/* ===== PRELOADER ===== */
+/* Subtle grain for luxury feel */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.025) 1px, transparent 0);
+  background-size: 22px 22px;
+  opacity:.35;
+  z-index:0;
+}
+
+/* =========================
+   Preloader (VIP minimal)
+========================= */
 #preloader{
   position:fixed; inset:0; z-index:9999;
   display:flex; align-items:center; justify-content:center;
   background:
-    radial-gradient(circle at 30% 30%, rgba(140,210,255,.10), transparent 45%),
-    radial-gradient(circle at 70% 70%, rgba(140,210,255,.06), transparent 50%),
-    #071017;
-  transition:opacity .5s ease, visibility .5s ease;
+    radial-gradient(circle at 30% 30%, rgba(160,220,255,.10), transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,.06), transparent 60%),
+    #04080d;
+  transition:opacity .55s ease, visibility .55s ease;
 }
 #preloader.hide{opacity:0; visibility:hidden}
-.loaderWrap{display:flex; flex-direction:column; align-items:center; gap:14px}
-.loader{
-  width:64px; height:64px; border-radius:50%;
-  border:3px solid rgba(255,255,255,.12);
-  border-top-color: rgba(235,255,255,.9);
-  box-shadow:0 0 24px rgba(140,210,255,.16);
-  animation:spin 1s linear infinite;
+.loaderWrap{display:flex; flex-direction:column; align-items:center; gap:16px}
+.loaderRing{
+  width:62px;height:62px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.14);
+  position:relative;
+  box-shadow: 0 0 24px rgba(160,220,255,.10);
 }
-@keyframes spin{to{transform:rotate(360deg)}}
-.loaderText{opacity:.85; letter-spacing:.5px; font-size:14px}
+.loaderRing:before{
+  content:"";
+  position:absolute; inset:8px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.08);
+}
+.loaderDot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.90);
+  position:absolute; top:2px; left:50%;
+  transform:translateX(-50%);
+  box-shadow:0 0 18px rgba(160,220,255,.18);
+  animation:spin 1.2s linear infinite;
+  transform-origin: 0 29px;
+}
+@keyframes spin{to{transform:translateX(-50%) rotate(360deg)}}
+.loaderText{
+  font-size:12px; letter-spacing:.26em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.74);
+}
 
-/* ===== FX LAYERS ===== */
-.fx{ position:fixed; inset:0; pointer-events:none; z-index:0; }
-#mapLayer{ position:absolute; inset:0; opacity:.95; }
-#particles{ position:absolute; inset:0; opacity:.22; }
+/* =========================
+   FX Layers (Map + Particles)
+========================= */
+.fx{ position:fixed; inset:0; pointer-events:none; z-index:1; }
+#mapLayer{ position:absolute; inset:0; opacity:.96; }
+#particles{ position:absolute; inset:0; opacity:.20; }
 
-/* ===== TOP NAV ===== */
+/* =========================
+   Layout
+========================= */
+.container{
+  width:100%;
+  max-width:var(--max);
+  margin:0 auto;
+  padding:0 18px;
+}
+
+/* =========================
+   VIP Nav
+========================= */
 .nav{
-  position:sticky; top:0; z-index:50;
-  background:rgba(5,12,18,.38);
-  backdrop-filter: blur(14px);
-  border-bottom:1px solid rgba(255,255,255,.075);
+  position:sticky; top:0;
+  z-index:30;
+  background: rgba(5,10,14,.42);
+  backdrop-filter: blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.07);
 }
 .navInner{
-  max-width:1120px; margin:0 auto;
   display:flex; align-items:center; justify-content:space-between;
-  padding:14px 18px;
+  padding:16px 0;
 }
-.brand{display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.8px}
-.dot{
-  width:10px; height:10px; border-radius:50%;
-  background:rgba(235,255,255,.95);
-  box-shadow:0 0 16px rgba(140,210,255,.18);
+.brand{
+  display:flex; align-items:center; gap:12px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-size:13px;
 }
-.nav a{
-  color:#fff; text-decoration:none; opacity:.82; margin-left:16px; font-size:14px;
+.brandMark{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 0 18px rgba(160,220,255,.14);
+}
+.navLinks{
+  display:flex; align-items:center; gap:18px;
+}
+.navLinks a{
+  color:rgba(255,255,255,.82);
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:.02em;
   transition:.25s;
 }
-.nav a:hover{opacity:1; color:rgba(235,255,255,.95)}
+.navLinks a:hover{color:rgba(255,255,255,.98)}
+.navCta{
+  padding:10px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+}
+.navCta:hover{
+  border-color: rgba(255,255,255,.26);
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+}
 
-/* ===== HERO ===== */
+/* =========================
+   Hero VIP
+========================= */
 .hero{
-  position:relative; z-index:1;
+  position:relative;
+  z-index:10;
   min-height:92vh;
-  display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  text-align:center;
-  padding:64px 18px 34px;
+  display:flex;
+  align-items:center;
+  padding:76px 0 54px;
   overflow:hidden;
 }
-.hero::before{
-  content:"";
-  position:absolute; inset:-35%;
+.heroGlow{
+  position:absolute; inset:-25%;
   background:
-    radial-gradient(circle at 30% 30%, rgba(235,255,255,.10), transparent 60%),
-    radial-gradient(circle at 80% 70%, rgba(140,210,255,.10), transparent 62%);
-  filter: blur(40px);
-  z-index:-2;
+    radial-gradient(circle at 28% 28%, rgba(255,255,255,.10), transparent 58%),
+    radial-gradient(circle at 78% 62%, rgba(160,220,255,.10), transparent 60%),
+    radial-gradient(circle at 50% 115%, rgba(255,255,255,.06), transparent 60%);
+  filter: blur(54px);
+  z-index:-1;
+}
+.heroGrid{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to right, rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 120px 120px;
+  opacity:.25;
+  mask-image: radial-gradient(circle at 45% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 85%);
+  z-index:-1;
 }
 
-/* ===== “как было”: знак-глобус (улучшенный, премиальнее) ===== */
-.logoWrap{
+.heroInner{
+  display:grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap:34px;
+  align-items:center;
+}
+@media (max-width:920px){
+  .heroInner{grid-template-columns:1fr; text-align:center}
+}
+
+/* “как было” — globe badge, premium */
+.badge{
   width:118px;height:118px;border-radius:30px;
   display:grid; place-items:center;
-  background:rgba(255,255,255,.045);
+  background: rgba(255,255,255,.045);
   border:1px solid rgba(255,255,255,.10);
-  box-shadow:
-    0 26px 70px rgba(0,0,0,.32),
-    inset 0 1px 0 rgba(255,255,255,.10);
-  animation:float 4s ease-in-out infinite;
-  margin-bottom:22px;
+  box-shadow: var(--shadow);
   position:relative;
   overflow:hidden;
+  animation:float 4.2s ease-in-out infinite;
 }
-.logoWrap::after{
+.badge::after{
   content:"";
   position:absolute; inset:-40%;
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), transparent 55%);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), transparent 60%);
   transform: rotate(18deg);
-  opacity:.7;
+  opacity:.75;
 }
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
-
-/* globe mark */
 .globe{
   width:66px;height:66px;border-radius:50%;
   border:1.6px solid rgba(255,255,255,.26);
   position:relative;
-  box-shadow:0 0 24px rgba(140,210,255,.16);
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), rgba(255,255,255,0) 60%);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.11), rgba(255,255,255,0) 62%);
+  box-shadow:0 0 26px rgba(160,220,255,.14);
 }
 .globe::before{
   content:""; position:absolute; inset:10px;
@@ -146,202 +248,387 @@ body{
   content:""; position:absolute; left:10px; right:10px; top:50%;
   height:1px; background:rgba(255,255,255,.18);
 }
-.globeLines{
-  position:absolute; inset:0;
-}
+.globeLines{position:absolute; inset:0}
 .globeLines span{
   position:absolute; top:8px; bottom:8px; width:1px;
   background:rgba(255,255,255,.14);
 }
 .globeLines span:nth-child(1){left:22px}
-.globeLines span:nth-child(2){left:50%; transform:translateX(-50%); background:rgba(235,255,255,.30)}
+.globeLines span:nth-child(2){left:50%; transform:translateX(-50%); background:rgba(255,255,255,.24)}
 .globeLines span:nth-child(3){right:22px}
 
-/* ===== TITLE (white, bigger, premium) ===== */
-h1{
-  color:var(--title);
-  font-size:86px;            /* увеличил */
-  font-weight:950;
-  letter-spacing:1.0px;
-  margin-bottom:14px;
-  opacity:0; transform:translateY(26px);
-  animation:fadeUp 1.0s ease forwards;
+.kicker{
+  margin-top:20px;
+  font-size:12px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.72);
+}
+.title{
+  margin-top:14px;
+  font-size:92px;           /* VIP крупнее */
+  line-height: .95;
+  font-weight: 950;
+  letter-spacing: .01em;
+  color:#fff;
   text-shadow:
-    0 14px 60px rgba(0,0,0,.38),
-    0 0 28px rgba(140,210,255,.10);
+    0 18px 90px rgba(0,0,0,.55),
+    0 0 26px rgba(160,220,255,.10);
 }
-@keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
+@media (max-width:520px){.title{font-size:60px}}
 
-p.lead{
+.subtitle{
+  margin-top:16px;
+  max-width:760px;
   font-size:18px;
-  max-width:860px;
+  line-height:1.7;
   color:var(--muted);
-  line-height:1.6;
-  opacity:0; transform:translateY(26px);
-  animation:fadeUp 1.4s ease forwards;
 }
+@media (max-width:920px){.subtitle{margin-left:auto;margin-right:auto}}
 
-/* Premium buttons */
-.ctaRow{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:28px}
+.heroBtns{
+  margin-top:28px;
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+@media (max-width:920px){.heroBtns{justify-content:center}}
+
 .btn{
-  padding:13px 34px; border-radius:44px;
-  border:1px solid rgba(235,255,255,.55);
+  display:inline-flex; align-items:center; gap:10px;
+  padding:14px 22px;
+  border-radius:999px;
+  text-decoration:none;
   color:rgba(255,255,255,.92);
-  text-decoration:none; font-size:16px;
-  transition:.35s; display:inline-block;
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-  box-shadow:
-    0 18px 44px rgba(0,0,0,.18),
-    inset 0 1px 0 rgba(255,255,255,.10);
+  font-size:14px;
+  letter-spacing:.02em;
+  border:1px solid rgba(255,255,255,.20);
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), var(--shadow2);
+  transition: transform .25s ease, border-color .25s ease, background .25s ease;
 }
 .btn:hover{
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.28);
   background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
-  box-shadow:
-    0 22px 52px rgba(0,0,0,.24),
-    0 0 18px rgba(140,210,255,.12),
-    inset 0 1px 0 rgba(255,255,255,.12);
 }
-.btn.secondary{
-  border-color:rgba(255,255,255,.18);
-  color:rgba(255,255,255,.86);
+.btn.primary{
+  border-color: rgba(255,255,255,.38);
+}
+.btn.ghost{
   background: rgba(255,255,255,.02);
+  border-color: rgba(255,255,255,.14);
 }
-.btn.secondary:hover{background:rgba(255,255,255,.07)}
-
-/* ===== SECTIONS ===== */
-.section{position:relative; z-index:1; padding:92px 18px; text-align:center}
-.section h2{font-size:32px; letter-spacing:.6px}
-.sub{
-  margin-top:10px;
-  color:var(--muted2);
-  max-width:900px;
-  margin-left:auto; margin-right:auto;
-  line-height:1.65;
+.iconDot{
+  width:8px;height:8px;border-radius:50%;
+  background: rgba(255,255,255,.92);
+  box-shadow:0 0 18px rgba(160,220,255,.14);
 }
 
-.cards{display:flex; justify-content:center; gap:22px; flex-wrap:wrap; margin-top:52px}
-.card{
-  width:290px; padding:30px; border-radius:22px;
-  background:var(--glass);
+/* Right panel (credibility) */
+.panel{
+  border-radius: var(--r);
+  background: rgba(255,255,255,.045);
   border:1px solid rgba(255,255,255,.10);
-  backdrop-filter: blur(14px);
-  transition:.35s;
-  opacity:0; transform:translateY(40px);
-  box-shadow:
-    0 26px 70px rgba(0,0,0,.22),
-    inset 0 1px 0 rgba(255,255,255,.08);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  padding:22px;
+  position:relative;
+  overflow:hidden;
 }
-.card.show{opacity:1; transform:translateY(0); transition:1s}
-.card:hover{
-  transform:translateY(-10px) scale(1.03);
-  background:var(--glass2);
-  box-shadow:
-    0 34px 90px rgba(0,0,0,.28),
-    inset 0 1px 0 rgba(255,255,255,.10);
+.panel::before{
+  content:"";
+  position:absolute; inset:-40%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(160,220,255,.08), transparent 60%);
+  filter: blur(26px);
+  opacity:.9;
 }
-.card h3{margin-bottom:10px; color:rgba(235,255,255,.95); font-size:18px}
-.card p{opacity:.85; line-height:1.6; font-size:14.8px}
+.panel > *{position:relative}
+.panelTitle{
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  font-size:12px;
+  color:rgba(255,255,255,.74);
+}
+.stats{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.stat{
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.09);
+  background: rgba(0,0,0,.14);
+  padding:14px;
+}
+.stat b{
+  display:block;
+  font-size:18px;
+  letter-spacing:.02em;
+}
+.stat span{
+  display:block;
+  margin-top:6px;
+  font-size:12.5px;
+  color:rgba(255,255,255,.70);
+  line-height:1.35;
+}
+.trustRow{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.trustPill{
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  font-size:12.5px;
+  color:rgba(255,255,255,.78);
+}
 
-/* Contact chips */
-.chips{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:22px}
-.chip{
-  padding:12px 18px; border-radius:999px;
+/* =========================
+   Sections VIP
+========================= */
+.section{
+  position:relative;
+  z-index:10;
+  padding:92px 0;
+}
+.sectionHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:22px;
+  flex-wrap:wrap;
+}
+.h2{
+  font-size:36px;
+  letter-spacing:.01em;
+  font-weight:900;
+  color:#fff;
+}
+.p{
+  max-width:640px;
+  color:var(--muted2);
+  line-height:1.7;
+}
+.hr{
+  margin-top:22px;
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+  opacity:.9;
+}
+
+/* VIP cards */
+.grid3{
+  margin-top:38px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:18px;
+}
+@media (max-width:980px){.grid3{grid-template-columns:1fr}}
+.card{
+  border-radius: var(--r);
+  background: rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow2);
+  padding:24px;
+  overflow:hidden;
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+  position:relative;
+}
+.card::after{
+  content:"";
+  position:absolute; inset:-40%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), transparent 62%);
+  filter: blur(30px);
+  opacity:.55;
+}
+.card:hover{
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+}
+.card > *{position:relative}
+.cardTop{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+}
+.cardTag{
+  font-size:12px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.70);
+}
+.cardTitle{
+  margin-top:12px;
+  font-size:18px;
+  font-weight:900;
+  color:rgba(255,255,255,.92);
+}
+.cardText{
+  margin-top:10px;
+  color:rgba(255,255,255,.74);
+  line-height:1.7;
+  font-size:14.5px;
+}
+.cardIcon{
+  width:38px;height:38px;border-radius:14px;
   border:1px solid rgba(255,255,255,.14);
-  background:rgba(0,0,0,.10);
-  text-decoration:none; color:#fff; opacity:.9;
+  background: rgba(0,0,0,.14);
+  display:grid; place-items:center;
+}
+.cardIcon i{
+  display:block;
+  width:14px;height:14px;border-radius:50%;
+  background: rgba(255,255,255,.85);
+  box-shadow:0 0 22px rgba(160,220,255,.14);
+}
+
+/* =========================
+   Contact VIP
+========================= */
+.contactBox{
+  margin-top:36px;
+  border-radius: var(--r);
+  background: rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  padding:26px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.contactBox .left{
+  display:flex; flex-direction:column; gap:6px;
+}
+.contactBox .left b{
+  font-size:18px;
+  letter-spacing:.01em;
+}
+.contactBox .left span{
+  color:rgba(255,255,255,.72);
+  line-height:1.55;
+}
+.chips{
+  display:flex; gap:10px; flex-wrap:wrap;
+}
+.chip{
+  text-decoration:none;
+  color:rgba(255,255,255,.88);
+  padding:11px 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.12);
   transition:.25s;
 }
 .chip:hover{
-  opacity:1;
-  border-color:rgba(235,255,255,.26);
-  box-shadow:0 0 16px rgba(140,210,255,.10)
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.04);
 }
 
-/* Footer */
+/* =========================
+   Footer
+========================= */
 .footer{
-  position:relative; z-index:1;
-  padding:30px 18px 44px;
+  position:relative;
+  z-index:10;
+  padding:34px 0 46px;
+  border-top:1px solid rgba(255,255,255,.07);
+  color:rgba(255,255,255,.62);
   text-align:center;
-  opacity:.66;
-  border-top:1px solid rgba(255,255,255,.08);
+  letter-spacing:.02em;
 }
 
-/* responsive */
-@media (max-width:520px){
-  h1{font-size:56px; letter-spacing:.5px}
-  .logoWrap{width:104px;height:104px}
-  .btn{padding:12px 26px}
-}
-
-/* ===== Map SVG styling ===== */
-#mapSvg .oceanFog{
-  animation: fog 22s ease-in-out infinite alternate;
+/* =========================
+   Map Styling (Realistic)
+========================= */
+#mapSvg .fog{
+  animation: fog 18s ease-in-out infinite alternate;
   transform-origin: 50% 50%;
 }
 @keyframes fog{
-  0%{transform:translate(-1.0%, -0.6%) scale(1.02); opacity:.44}
-  100%{transform:translate(0.9%, 0.7%) scale(1.05); opacity:.60}
+  0%{transform:translate(-.6%, -.4%) scale(1.03); opacity:.38}
+  100%{transform:translate(.8%, .6%) scale(1.06); opacity:.58}
 }
-#mapSvg .graticule{fill:none; stroke: rgba(255,255,255,.030); stroke-width: 1}
-#mapSvg .land{fill: rgba(255,255,255,.042); stroke: rgba(255,255,255,.080); stroke-width: .9}
-#mapSvg .coast{fill:none; stroke: rgba(255,255,255,.105); stroke-width: .9; opacity:.48}
-#mapSvg .borders{fill:none; stroke: rgba(255,255,255,.045); stroke-width: .8; opacity:.46}
+#mapSvg .graticule{fill:none; stroke: rgba(255,255,255,.020); stroke-width: 1}
+#mapSvg .land{
+  fill: rgba(255,255,255,.038);
+  stroke: rgba(255,255,255,.085);
+  stroke-width: .9;
+  opacity:.95;
+}
+#mapSvg .coast{fill:none; stroke: rgba(255,255,255,.12); stroke-width: .9; opacity:.42}
+#mapSvg .borders{fill:none; stroke: rgba(255,255,255,.045); stroke-width: .8; opacity:.40}
 
-/* solid routes */
+/* solid routes (no dotted) */
 #mapSvg .route{
   fill:none;
   stroke-linecap:round;
-  filter: drop-shadow(0 0 10px rgba(140,210,255,.08));
   opacity:.92;
+  filter: drop-shadow(0 0 10px rgba(160,220,255,.07));
 }
-#mapSvg .sea{stroke: rgba(140,210,255,.40); stroke-width:1.55}
-#mapSvg .air{stroke: rgba(255,255,255,.38); stroke-width:1.60}
-#mapSvg .landr{stroke: rgba(170,255,220,.30); stroke-width:1.45; opacity:.82}
+#mapSvg .route.sea{stroke: rgba(160,220,255,.30); stroke-width:1.55}
+#mapSvg .route.air{stroke: rgba(255,255,255,.28); stroke-width:1.55}
+#mapSvg .route.land{stroke: rgba(190,255,220,.24); stroke-width:1.45}
 
-#mapSvg .hub{fill: rgba(235,255,255,.80); opacity:.95}
+#mapSvg .hub{fill: rgba(255,255,255,.82)}
 #mapSvg .pulse{
-  fill:none; stroke: rgba(235,255,255,.80);
-  stroke-width:1.5; opacity:.32;
-  transform-origin:center; animation:pulse 2.6s ease-out infinite;
+  fill:none; stroke: rgba(255,255,255,.72);
+  stroke-width:1.5; opacity:.28;
+  transform-origin:center; animation:pulse 2.8s ease-out infinite;
 }
-@keyframes pulse{0%{transform:scale(.7); opacity:.40}100%{transform:scale(2.6); opacity:0}}
+@keyframes pulse{0%{transform:scale(.7); opacity:.36}100%{transform:scale(2.8); opacity:0}}
 
-#mapSvg .scanHead{fill: rgba(255,255,255,.92); filter: drop-shadow(0 0 12px rgba(140,210,255,.14))}
-#mapSvg .scanTail{fill: rgba(235,255,255,.20)}
+#mapSvg .scanHead{fill: rgba(255,255,255,.92); filter: drop-shadow(0 0 12px rgba(160,220,255,.12))}
+#mapSvg .scanTail{fill: rgba(255,255,255,.18)}
 #mapSvg .scanHead.airC{fill: rgba(255,255,255,.88)}
-#mapSvg .scanTail.airC{fill: rgba(255,255,255,.16)}
-#mapSvg .scanHead.landC{fill: rgba(170,255,220,.70)}
-#mapSvg .scanTail.landC{fill: rgba(170,255,220,.14)}
+#mapSvg .scanTail.airC{fill: rgba(255,255,255,.14)}
+#mapSvg .scanHead.landC{fill: rgba(190,255,220,.62)}
+#mapSvg .scanTail.landC{fill: rgba(190,255,220,.12)}
 </style>
 </head>
 
 <body>
 
+<!-- Preloader -->
 <div id="preloader">
   <div class="loaderWrap">
-    <div class="loader"></div>
-    <div class="loaderText">Loading AtlasFlow…</div>
+    <div class="loaderRing"><div class="loaderDot"></div></div>
+    <div class="loaderText">AtlasFlow</div>
   </div>
 </div>
 
+<!-- FX layers -->
 <div class="fx">
   <div id="mapLayer">
     <svg id="mapSvg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
       <defs>
         <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#061018" />
-          <stop offset="0.55" stop-color="#071822" />
-          <stop offset="1" stop-color="#061018" />
+          <stop offset="0" stop-color="#050b12"/>
+          <stop offset="0.55" stop-color="#07131c"/>
+          <stop offset="1" stop-color="#03070c"/>
         </linearGradient>
       </defs>
 
       <rect width="1200" height="600" fill="url(#ocean)"/>
-      <g class="oceanFog">
-        <circle cx="260" cy="150" r="230" fill="rgba(140,210,255,.045)"/>
-        <circle cx="420" cy="110" r="160" fill="rgba(140,210,255,.030)"/>
-        <circle cx="980" cy="430" r="280" fill="rgba(140,210,255,.035)"/>
-        <circle cx="980" cy="130" r="230" fill="rgba(255,255,255,.020)"/>
-        <circle cx="170" cy="470" r="260" fill="rgba(255,255,255,.016)"/>
+
+      <g class="fog">
+        <circle cx="260" cy="140" r="260" fill="rgba(160,220,255,.040)"/>
+        <circle cx="420" cy="120" r="180" fill="rgba(255,255,255,.020)"/>
+        <circle cx="980" cy="420" r="320" fill="rgba(160,220,255,.030)"/>
+        <circle cx="990" cy="130" r="260" fill="rgba(255,255,255,.018)"/>
+        <circle cx="170" cy="470" r="300" fill="rgba(255,255,255,.015)"/>
       </g>
 
       <path id="graticulePath" class="graticule"></path>
@@ -351,7 +638,7 @@ p.lead{
 
       <path id="routeSea" class="route sea"></path>
       <path id="routeAir" class="route air"></path>
-      <path id="routeLand" class="route landr"></path>
+      <path id="routeLand" class="route land"></path>
 
       <g id="scanSea">
         <circle class="scanTail" r="2.1"></circle>
@@ -360,108 +647,206 @@ p.lead{
         <circle class="scanHead" r="3.0"></circle>
       </g>
       <g id="scanAir">
-        <circle class="scanTail airC" r="2.2"></circle>
-        <circle class="scanTail airC" r="1.9"></circle>
-        <circle class="scanTail airC" r="1.6"></circle>
-        <circle class="scanHead airC" r="3.3"></circle>
+        <circle class="scanTail airC" r="2.1"></circle>
+        <circle class="scanTail airC" r="1.8"></circle>
+        <circle class="scanTail airC" r="1.5"></circle>
+        <circle class="scanHead airC" r="3.1"></circle>
       </g>
       <g id="scanLand">
         <circle class="scanTail landC" r="2.0"></circle>
         <circle class="scanTail landC" r="1.7"></circle>
         <circle class="scanTail landC" r="1.4"></circle>
-        <circle class="scanHead landC" r="2.8"></circle>
+        <circle class="scanHead landC" r="2.9"></circle>
       </g>
 
       <g id="hubs"></g>
     </svg>
   </div>
+
   <canvas id="particles"></canvas>
 </div>
 
+<!-- Nav -->
 <header class="nav">
-  <div class="navInner">
-    <div class="brand"><span class="dot"></span> ATLASFLOW</div>
-    <nav>
+  <div class="container navInner">
+    <div class="brand"><span class="brandMark"></span> ATLASFLOW</div>
+    <div class="navLinks">
       <a href="#services">Services</a>
-      <a href="#routesSec">Routes</a>
+      <a href="#network">Network</a>
       <a href="#contact">Contact</a>
-    </nav>
+      <a class="navCta" href="#contact">Request a Quote</a>
+    </div>
   </div>
 </header>
 
-<section class="hero">
-  <!-- back to “as was”: globe icon -->
-  <div class="logoWrap" aria-hidden="true">
-    <div class="globe">
-      <div class="globeLines"><span></span><span></span><span></span></div>
-    </div>
-  </div>
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="heroGlow"></div>
+  <div class="heroGrid"></div>
 
-  <h1 id="typeTitle"></h1>
-  <p class="lead">
-    Global logistics flow between China, EU & Thailand. Smart routing, tracking-ready operations, and fast coordination.
-  </p>
+  <div class="container heroInner">
+    <div>
+      <div class="badge" aria-hidden="true">
+        <div class="globe">
+          <div class="globeLines"><span></span><span></span><span></span></div>
+        </div>
+      </div>
 
-  <div class="ctaRow">
-    <a class="btn" href="#services">Explore Services</a>
-    <a class="btn secondary" href="#contact">Get a Quote</a>
-  </div>
-</section>
+      <div class="kicker">Global Logistics • High-Trust Operations</div>
+      <h1 class="title" id="typeTitle"></h1>
+      <div class="subtitle">
+        Premium end-to-end cargo solutions across <b>EU</b>, <b>China</b> & <b>Thailand</b>.
+        Designed for enterprise clients who demand <b>reliability</b>, <b>visibility</b> and <b>control</b>.
+      </div>
 
-<section id="services" class="section">
-  <h2>Our Services</h2>
-  <p class="sub">Air, sea, and local distribution — built for fast communication and transparent flow from pickup to delivery.</p>
+      <div class="heroBtns">
+        <a class="btn primary" href="#contact"><span class="iconDot"></span>Request a VIP Quote</a>
+        <a class="btn ghost" href="#services"><span class="iconDot"></span>Explore Services</a>
+      </div>
+    </div>
 
-  <div class="cards">
-    <div class="card">
-      <h3>Air Cargo</h3>
-      <p>Fast international delivery with optimized air routes and priority handling.</p>
-    </div>
-    <div class="card">
-      <h3>Sea Freight</h3>
-      <p>Cost-effective container logistics for stable and scalable cross-border shipping.</p>
-    </div>
-    <div class="card">
-      <h3>Warehousing</h3>
-      <p>Secure storage & distribution hubs in key locations across EU and SEA.</p>
-    </div>
-  </div>
-</section>
-
-<section id="routesSec" class="section">
-  <h2>Optimized Routes</h2>
-  <p class="sub">We connect regions with clear handoffs and predictable delivery windows — built for business operations.</p>
-
-  <div class="cards">
-    <div class="card">
-      <h3>EU ⇄ Thailand</h3>
-      <p>Consolidation, customs-ready documentation, and last-mile coordination.</p>
-    </div>
-    <div class="card">
-      <h3>China ⇄ EU</h3>
-      <p>Supplier pickup → consolidation → shipping → destination delivery support.</p>
-    </div>
-    <div class="card">
-      <h3>China ⇄ Thailand</h3>
-      <p>Fast lanes for e-commerce goods and regular cargo shipments.</p>
-    </div>
+    <aside class="panel">
+      <div class="panelTitle">Enterprise-grade capabilities</div>
+      <div class="stats">
+        <div class="stat"><b>24/7</b><span>Dedicated coordination & updates</span></div>
+        <div class="stat"><b>SEA / AIR / LAND</b><span>Multimodal route planning</span></div>
+        <div class="stat"><b>Customs-ready</b><span>Documentation & compliance flow</span></div>
+        <div class="stat"><b>Priority lanes</b><span>Time-critical shipments support</span></div>
+      </div>
+      <div class="trustRow">
+        <div class="trustPill">Executive support</div>
+        <div class="trustPill">Risk control</div>
+        <div class="trustPill">Transparent process</div>
+        <div class="trustPill">Premium handling</div>
+      </div>
+    </aside>
   </div>
 </section>
 
-<section id="contact" class="section">
-  <h2>Contact</h2>
-  <p class="sub">Send route + cargo details — we’ll reply with options and pricing.</p>
+<!-- Services -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="sectionHead">
+      <div>
+        <div class="kicker">Services</div>
+        <div class="h2">Luxury-level logistics. Built for scale.</div>
+      </div>
+      <div class="p">
+        We operate like a large company: clear responsibilities, predictable timelines,
+        proactive communication, and a premium client experience.
+      </div>
+    </div>
+    <div class="hr"></div>
 
-  <div class="chips">
-    <a class="chip" href="mailto:info@atlasflow.org">info@atlasflow.org</a>
-    <a class="chip" href="#services">Services</a>
-    <a class="chip" href="#routesSec">Routes</a>
+    <div class="grid3">
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">Air Cargo</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Priority & time-critical air shipments</div>
+        <div class="cardText">Fast international delivery with route optimization, priority handling and status updates for business operations.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">Sea Freight</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Stable, cost-efficient sea transport</div>
+        <div class="cardText">Container solutions with controlled handoffs and documentation readiness from origin to destination.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">Land & Distribution</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Last-mile & regional distribution</div>
+        <div class="cardText">Warehousing, consolidation and local delivery coordination for clean, predictable delivery windows.</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="footer">
+<!-- Network -->
+<section class="section" id="network">
+  <div class="container">
+    <div class="sectionHead">
+      <div>
+        <div class="kicker">Network</div>
+        <div class="h2">EU ⇄ China ⇄ Thailand — premium connectivity</div>
+      </div>
+      <div class="p">
+        Solid routes (no dotted lines) and calm motion for an “enterprise” feel.
+        We show scale without noise.
+      </div>
+    </div>
+    <div class="hr"></div>
+
+    <div class="grid3">
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">EU ⇄ Thailand</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Consolidation & customs flow</div>
+        <div class="cardText">Predictable handoffs, documentation clarity, and managed delivery coordination.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">China ⇄ EU</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Supplier pickup to destination</div>
+        <div class="cardText">From origin coordination to shipping and delivery support — structured operations.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">China ⇄ Thailand</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Fast lanes for ecommerce & cargo</div>
+        <div class="cardText">Premium handling, clear timelines, and reliable communication throughout the route.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="sectionHead">
+      <div>
+        <div class="kicker">Contact</div>
+        <div class="h2">Work with AtlasFlow</div>
+      </div>
+      <div class="p">
+        Send route + cargo details and we’ll reply with options and pricing.
+      </div>
+    </div>
+    <div class="hr"></div>
+
+    <div class="contactBox">
+      <div class="left">
+        <b>Premium coordination — fast response</b>
+        <span>We answer with a structured plan: route, timing, and next steps.</span>
+      </div>
+      <div class="chips">
+        <a class="chip" href="mailto:info@atlasflow.org">info@atlasflow.org</a>
+        <a class="chip" href="#services">Services</a>
+        <a class="chip" href="#network">Network</a>
+        <a class="chip" href="#top">Top</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
   © <span id="y"></span> AtlasFlow. All rights reserved.
-</div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
@@ -470,39 +855,28 @@ p.lead{
 /* ===== Preloader ===== */
 window.addEventListener('load', () => {
   const p = document.getElementById('preloader');
-  setTimeout(()=>p.classList.add('hide'), 450);
+  setTimeout(()=>p.classList.add('hide'), 520);
 });
 
 /* ===== Year ===== */
 document.getElementById('y').textContent = new Date().getFullYear();
 
-/* ===== Typewriter title ===== */
-const titleText = "AtlasFlow";
+/* ===== VIP Typewriter (fast & elegant) ===== */
 const titleEl = document.getElementById("typeTitle");
-let ti = 0;
-function typeTitle(){
-  if(ti <= titleText.length){
-    titleEl.textContent = titleText.slice(0, ti);
-    ti++;
-    setTimeout(typeTitle, 55);
+const titleText = "AtlasFlow";
+let i = 0;
+(function type(){
+  if(i <= titleText.length){
+    titleEl.textContent = titleText.slice(0, i);
+    i++;
+    setTimeout(type, 48);
   }
-}
-typeTitle();
+})();
 
-/* ===== Scroll reveal cards ===== */
-const cards = document.querySelectorAll('.card');
-const reveal = () => {
-  cards.forEach(c => {
-    const top = c.getBoundingClientRect().top;
-    if(top < window.innerHeight - 90) c.classList.add('show');
-  });
-};
-window.addEventListener('scroll', reveal);
-reveal();
-
-/* ===== Particles (subtle premium grain) ===== */
+/* ===== Subtle particles (premium) ===== */
 const canvas = document.getElementById('particles');
 const ctx = canvas.getContext('2d');
+
 function resize(){
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -510,19 +884,19 @@ function resize(){
 window.addEventListener('resize', resize);
 resize();
 
-const PCOUNT = Math.min(34, Math.floor(window.innerWidth / 48));
+const PCOUNT = Math.min(34, Math.floor(window.innerWidth / 52));
 const ps = [];
-for(let i=0;i<PCOUNT;i++){
+for(let k=0;k<PCOUNT;k++){
   ps.push({
     x: Math.random()*canvas.width,
     y: Math.random()*canvas.height,
-    r: 0.6 + Math.random()*1.2,
+    r: 0.6 + Math.random()*1.1,
     vx: -0.03 + Math.random()*0.06,
     vy: -0.02 + Math.random()*0.04,
-    a: 0.02 + Math.random()*0.05
+    a: 0.018 + Math.random()*0.05
   });
 }
-function step(){
+function tick(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
   for(const p of ps){
     p.x += p.vx; p.y += p.vy;
@@ -533,14 +907,14 @@ function step(){
 
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle = `rgba(235,255,255,${p.a})`;
+    ctx.fillStyle = `rgba(255,255,255,${p.a})`;
     ctx.fill();
   }
-  requestAnimationFrame(step);
+  requestAnimationFrame(tick);
 }
-step();
+tick();
 
-/* ===== REAL MAP + SOLID routes + scan head ===== */
+/* ===== REALISTIC MAP + SOLID routes + scan heads ===== */
 (async function(){
   const W = 1200, H = 600;
 
@@ -567,11 +941,13 @@ step();
   const borders = topojson.mesh(topoCountries, topoCountries.objects.countries, (a,b)=>a!==b);
   document.getElementById("borderPath").setAttribute("d", geoPath(borders));
 
+  // Hubs: EU (Hamburg), China (Shanghai), Thailand (Bangkok)
   const HUBS = [
-    {name:"EU", lon: 9.99,  lat:53.55},      // Hamburg
-    {name:"China", lon:121.47,lat:31.23},    // Shanghai
-    {name:"Thailand", lon:100.50,lat:13.75}, // Bangkok
+    {name:"EU", lon: 9.99,  lat:53.55},
+    {name:"China", lon:121.47,lat:31.23},
+    {name:"Thailand", lon:100.50,lat:13.75},
   ];
+
   d3.select("#hubs").selectAll("g")
     .data(HUBS)
     .join("g")
@@ -581,8 +957,8 @@ step();
     })
     .each(function(){
       const g = d3.select(this);
-      g.append("circle").attr("class","hub").attr("r",3.8);
-      g.append("circle").attr("class","pulse").attr("r",7.8);
+      g.append("circle").attr("class","hub").attr("r",3.6);
+      g.append("circle").attr("class","pulse").attr("r",7.6);
     });
 
   function pt(lon,lat){
@@ -599,6 +975,7 @@ step();
     return `M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${cx.toFixed(1)} ${cy.toFixed(1)}, ${cx.toFixed(1)} ${cy.toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
   }
 
+  // solid routes (no dotted)
   document.getElementById("routeSea").setAttribute("d",  curve(CN, EU, -18));
   document.getElementById("routeAir").setAttribute("d",  curve(EU, TH,  58));
   document.getElementById("routeLand").setAttribute("d", curve(CN, TH,  34));
@@ -624,7 +1001,7 @@ step();
         const pos = pathEl.getPointAtLength(pp * len);
         c.setAttribute("cx", pos.x);
         c.setAttribute("cy", pos.y);
-        if(idx < 3) c.setAttribute("opacity", String(0.20 - idx*0.055));
+        if(idx < 3) c.setAttribute("opacity", String(0.18 - idx*0.05));
         else c.setAttribute("opacity", "0.92");
       });
 
@@ -633,11 +1010,11 @@ step();
     requestAnimationFrame(frame);
   }
 
-  animateScan("routeSea","scanSea", 10800, 300);
-  animateScan("routeAir","scanAir",  7600, 900);
-  animateScan("routeLand","scanLand", 9200, 600);
+  animateScan("routeSea","scanSea", 11200, 380);
+  animateScan("routeAir","scanAir",  7800, 950);
+  animateScan("routeLand","scanLand", 9400, 620);
 })();
 </script>
 
 </body>
-</html>
+  </html>
