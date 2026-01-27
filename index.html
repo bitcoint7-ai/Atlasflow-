@@ -1,162 +1,510 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>AtlasFlow — Global Logistics</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{
-    overflow:hidden;
-    background:#030b14;
+  :root{
+    --bg0:#020814;
+    --bg1:#061b2b;
+    --cyan:#00eaff;
+    --mint:#00ff9a;
+    --lineSea: rgba(0,210,255,.75);
+    --lineAir: rgba(255,255,255,.75);
+    --lineLand: rgba(0,255,160,.75);
+    --landFill: rgba(0,255,170,.12);
+    --landStroke: rgba(0,255,210,.22);
+    --grid: rgba(255,255,255,.06);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background: radial-gradient(1200px 600px at 20% 10%, rgba(0,234,255,.12), transparent 60%),
+               radial-gradient(900px 500px at 80% 20%, rgba(0,255,154,.10), transparent 55%),
+               linear-gradient(180deg, var(--bg0), var(--bg1));
     color:#fff;
-}
+    overflow:hidden;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
 
-/* ===== CANVAS BACKGROUND ===== */
-#bgCanvas{
-    position:fixed;
-    top:0;left:0;
-    width:100%;
-    height:100%;
+  /* ===== Animated background (premium dynamics) ===== */
+  .bg {
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:-2;
+  }
+  .bg::before{
+    content:"";
+    position:absolute; inset:-30%;
+    background:
+      radial-gradient(1200px 700px at 30% 20%, rgba(0,234,255,.14), transparent 60%),
+      radial-gradient(900px 600px at 70% 30%, rgba(0,255,154,.10), transparent 55%),
+      radial-gradient(900px 700px at 50% 80%, rgba(120,80,255,.08), transparent 55%);
+    filter: blur(10px);
+    animation: driftGlow 18s ease-in-out infinite alternate;
+    opacity:.9;
+  }
+  @keyframes driftGlow{
+    0%{ transform: translate3d(-2%, -1%, 0) scale(1.02) }
+    100%{ transform: translate3d(2%, 1.5%, 0) scale(1.06) }
+  }
+
+  canvas#stars{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    opacity:.22;
+    filter: blur(.2px);
+  }
+
+  /* subtle noise overlay */
+  .noise{
+    position:fixed; inset:0;
+    pointer-events:none;
     z-index:-1;
-}
+    opacity:.10;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+  }
 
-/* ===== CONTENT ===== */
-.content{
+  /* ===== Layout ===== */
+  .wrap{
     position:relative;
-    z-index:2;
-    height:100vh;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-}
+    height:100%;
+    display:grid;
+    place-items:center;
+    padding: clamp(18px, 3vw, 42px);
+  }
 
-h1{
-    font-size:64px;
-    letter-spacing:6px;
-    background:linear-gradient(90deg,#00eaff,#00ff88);
+  .hero{
+    width:min(1180px, 96vw);
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap: clamp(16px, 3vw, 34px);
+    align-items:center;
+  }
+
+  @media (max-width: 980px){
+    .hero{grid-template-columns:1fr; text-align:center}
+  }
+
+  .card{
+    border:1px solid rgba(255,255,255,.08);
+    background: rgba(10, 18, 30, .42);
+    backdrop-filter: blur(10px);
+    border-radius: 22px;
+    padding: clamp(18px, 3.2vw, 34px);
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  }
+
+  h1{
+    margin:0;
+    font-size: clamp(34px, 4.6vw, 64px);
+    letter-spacing: .18em;
+    text-transform:uppercase;
+    background: linear-gradient(90deg, var(--cyan), var(--mint));
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
-}
+  }
+  .sub{
+    margin-top: 14px;
+    font-size: clamp(14px, 1.4vw, 18px);
+    color: rgba(255,255,255,.82);
+    line-height:1.55;
+  }
 
-p{
-    margin-top:20px;
-    font-size:20px;
-    opacity:0.85;
-}
+  .chips{
+    margin-top: 18px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  @media (max-width:980px){
+    .chips{justify-content:center}
+  }
+  .chip{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+    font-size: 13px;
+    color: rgba(255,255,255,.85);
+  }
+  .dot{
+    width:10px; height:10px; border-radius:50%;
+    box-shadow: 0 0 18px rgba(0,0,0,.0);
+  }
+  .sea{ background: rgba(0,210,255,.95); box-shadow:0 0 16px rgba(0,210,255,.35) }
+  .air{ background: rgba(255,255,255,.95); box-shadow:0 0 16px rgba(255,255,255,.25) }
+  .land{ background: rgba(0,255,160,.95); box-shadow:0 0 16px rgba(0,255,160,.28) }
 
-button{
-    margin-top:40px;
-    padding:14px 40px;
+  .ctaRow{
+    margin-top: 22px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  @media (max-width:980px){
+    .ctaRow{justify-content:center}
+  }
+  .btn{
     border:none;
-    border-radius:30px;
-    font-size:16px;
     cursor:pointer;
-    background:linear-gradient(90deg,#00eaff,#00ff88);
+    border-radius: 999px;
+    padding: 14px 22px;
+    font-weight: 700;
     color:#001018;
-    font-weight:bold;
-    transition:0.3s;
-}
-button:hover{
-    transform:scale(1.05);
-}
+    background: linear-gradient(90deg, var(--cyan), var(--mint));
+    transition: transform .2s ease, filter .2s ease;
+  }
+  .btn:hover{ transform: translateY(-1px) scale(1.02); filter: brightness(1.03) }
+  .btn2{
+    border-radius: 999px;
+    padding: 14px 18px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color: rgba(255,255,255,.86);
+    cursor:pointer;
+    transition: transform .2s ease, background .2s ease;
+  }
+  .btn2:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09) }
+
+  /* ===== Globe / Map ===== */
+  .globeBox{
+    position:relative;
+    overflow:hidden;
+    min-height: clamp(330px, 46vw, 520px);
+  }
+
+  .globe{
+    width:100%;
+    height:100%;
+    display:block;
+    transform: translateZ(0);
+  }
+
+  .glowRing{
+    position:absolute;
+    inset:-12%;
+    border-radius: 999px;
+    background: radial-gradient(circle at 50% 50%,
+      rgba(0,234,255,.18), transparent 50%),
+      radial-gradient(circle at 55% 60%,
+      rgba(0,255,154,.12), transparent 55%);
+    filter: blur(12px);
+    opacity:.8;
+    animation: ring 10s ease-in-out infinite alternate;
+  }
+  @keyframes ring{
+    0%{ transform: translate3d(-1.5%, -1%, 0) scale(1.01) }
+    100%{ transform: translate3d(1.3%, 1.2%, 0) scale(1.06) }
+  }
+
+  /* routes dash animation */
+  .route{
+    fill:none;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,.0));
+  }
+  .seaRoute{ stroke: var(--lineSea); stroke-width:2.2; stroke-dasharray: 10 10; animation: dash 2.6s linear infinite; }
+  .airRoute{ stroke: var(--lineAir); stroke-width:2.0; stroke-dasharray: 6 14;  animation: dash 2.1s linear infinite; opacity:.9;}
+  .landRoute{stroke: var(--lineLand);stroke-width:2.0; stroke-dasharray: 4 12;  animation: dash 2.3s linear infinite; opacity:.85;}
+
+  @keyframes dash{
+    to { stroke-dashoffset: -220; }
+  }
+
+  /* marker glow */
+  .marker{
+    filter: drop-shadow(0 0 12px rgba(0,234,255,.35));
+  }
+
+  /* map motion (subtle, like real globe drift) */
+  .mapDrift{
+    transform-origin: 50% 50%;
+    animation: mapFloat 12s ease-in-out infinite alternate;
+  }
+  @keyframes mapFloat{
+    0%{ transform: translate3d(-1.1%, .3%, 0) scale(1.01) }
+    100%{ transform: translate3d(1.0%, -.5%, 0) scale(1.03) }
+  }
+
+  /* accessibility */
+  @media (prefers-reduced-motion: reduce){
+    .bg::before, .glowRing, .mapDrift, .seaRoute, .airRoute, .landRoute{ animation:none !important; }
+  }
 </style>
 </head>
+
 <body>
+  <div class="bg">
+    <canvas id="stars"></canvas>
+  </div>
+  <div class="noise"></div>
 
-<canvas id="bgCanvas"></canvas>
+  <div class="wrap">
+    <div class="hero">
+      <div class="card">
+        <h1>ATLASFLOW</h1>
+        <div class="sub">
+          Global logistics flow between <b>China</b>, <b>EU</b> & <b>Thailand</b> — sea, air and land routes,
+          tracked and optimized end-to-end.
+        </div>
 
-<div class="content">
-    <h1>ATLASFLOW</h1>
-    <p>Global logistics flow between China • EU • Thailand</p>
-    <button>Start Shipping</button>
-</div>
+        <div class="chips">
+          <div class="chip"><span class="dot sea"></span>Sea freight • ferries • lanes</div>
+          <div class="chip"><span class="dot air"></span>Air freight • express</div>
+          <div class="chip"><span class="dot land"></span>Land freight • trucking</div>
+        </div>
+
+        <div class="ctaRow">
+          <button class="btn">Start Shipping</button>
+          <button class="btn2" onclick="window.scrollTo({top:0,behavior:'smooth'})">Contact</button>
+        </div>
+      </div>
+
+      <div class="card globeBox">
+        <div class="glowRing"></div>
+
+        <!-- SVG globe with “realistic” continents outlines + dynamic dotted routes -->
+        <svg class="globe" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg" aria-label="AtlasFlow globe">
+          <defs>
+            <!-- circular globe mask -->
+            <mask id="globeMask">
+              <rect width="100%" height="100%" fill="black"/>
+              <circle cx="450" cy="280" r="240" fill="white"/>
+            </mask>
+
+            <!-- ocean gradient -->
+            <radialGradient id="ocean" cx="50%" cy="45%" r="65%">
+              <stop offset="0%" stop-color="rgba(0,234,255,0.18)"/>
+              <stop offset="55%" stop-color="rgba(0,80,140,0.18)"/>
+              <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+            </radialGradient>
+
+            <!-- subtle grid -->
+            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
+            </pattern>
+
+            <!-- vignette -->
+            <radialGradient id="vignette" cx="50%" cy="50%" r="60%">
+              <stop offset="55%" stop-color="rgba(0,0,0,0)"/>
+              <stop offset="100%" stop-color="rgba(0,0,0,.45)"/>
+            </radialGradient>
+          </defs>
+
+          <!-- globe base -->
+          <g mask="url(#globeMask)">
+            <rect width="900" height="560" fill="rgba(6,20,34,.55)"/>
+            <circle cx="450" cy="280" r="260" fill="url(#ocean)"/>
+
+            <!-- grid inside globe -->
+            <g opacity=".22">
+              <rect x="0" y="0" width="900" height="560" fill="url(#grid)"/>
+            </g>
+
+            <!-- continents group (detailed outlines) -->
+            <g class="mapDrift">
+              <!-- NOTE:
+                   These are custom SVG continent-like silhouettes (more detailed than blobs),
+                   tuned to look like a real world map while remaining lightweight. -->
+              <g fill="var(--landFill)" stroke="var(--landStroke)" stroke-width="1.4">
+                <!-- North America -->
+                <path d="M165,140
+                         C150,120 155,98 180,92
+                         C205,86 220,98 238,92
+                         C255,86 262,70 285,70
+                         C305,70 312,86 305,100
+                         C295,118 308,130 330,136
+                         C350,142 360,160 348,175
+                         C334,193 312,192 300,206
+                         C286,224 300,240 284,258
+                         C270,276 240,270 226,252
+                         C212,236 200,230 184,218
+                         C168,206 154,196 150,176
+                         C146,158 178,156 165,140 Z"/>
+                <!-- Greenland -->
+                <path d="M290,62
+                         C305,48 330,48 346,62
+                         C362,76 350,98 332,104
+                         C312,110 286,86 290,62 Z"/>
+                <!-- South America -->
+                <path d="M300,270
+                         C326,260 352,270 360,292
+                         C368,316 350,330 350,354
+                         C350,380 368,404 352,424
+                         C334,446 310,436 304,412
+                         C298,388 284,378 286,354
+                         C288,330 270,282 300,270 Z"/>
+
+                <!-- Europe -->
+                <path d="M430,168
+                         C450,156 474,154 492,166
+                         C506,176 520,172 532,182
+                         C546,194 532,212 514,214
+                         C494,216 486,232 468,230
+                         C450,228 436,216 426,204
+                         C416,192 414,178 430,168 Z"/>
+                <!-- Africa -->
+                <path d="M474,232
+                         C502,224 528,236 540,262
+                         C552,288 536,308 540,332
+                         C544,360 558,390 534,410
+                         C510,430 486,418 478,394
+                         C470,370 452,356 452,330
+                         C452,304 446,244 474,232 Z"/>
+
+                <!-- Asia -->
+                <path d="M520,150
+                         C548,132 590,132 618,154
+                         C640,172 664,166 686,176
+                         C708,186 722,204 712,224
+                         C700,246 672,244 654,256
+                         C632,270 622,292 594,292
+                         C566,292 554,274 534,262
+                         C512,248 502,222 514,202
+                         C526,182 506,166 520,150 Z"/>
+                <!-- India -->
+                <path d="M594,292
+                         C610,290 626,306 624,320
+                         C622,336 602,344 590,336
+                         C578,328 578,294 594,292 Z"/>
+                <!-- SE Asia -->
+                <path d="M640,282
+                         C656,282 670,294 672,310
+                         C674,326 660,332 652,326
+                         C644,320 630,298 640,282 Z"/>
+                <!-- Australia -->
+                <path d="M700,360
+                         C726,350 754,362 764,384
+                         C774,406 760,422 738,428
+                         C716,434 692,420 690,398
+                         C688,376 676,370 700,360 Z"/>
+                <!-- Japan -->
+                <path d="M716,214
+                         C724,206 734,214 732,224
+                         C730,234 720,236 716,228
+                         C712,220 708,222 716,214 Z"/>
+              </g>
+
+              <!-- soft coastline highlight -->
+              <g opacity=".22">
+                <path d="M0,0H900V560H0Z" fill="transparent"/>
+              </g>
+            </g>
+
+            <!-- vignette in globe -->
+            <circle cx="450" cy="280" r="245" fill="url(#vignette)" opacity=".9"/>
+          </g>
+
+          <!-- globe edge -->
+          <circle cx="450" cy="280" r="240" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
+
+          <!-- ROUTES overlay -->
+          <g>
+            <!-- Sea route: EU -> Thailand (примерно) -->
+            <path id="routeSea" class="route seaRoute"
+                  d="M485 250 C520 300, 560 330, 610 360" />
+            <!-- Air route: China/Asia -> EU -->
+            <path id="routeAir" class="route airRoute"
+                  d="M610 230 C585 195, 540 165, 500 180" />
+            <!-- Land route: EU -> Asia (через сушу) -->
+            <path id="routeLand" class="route landRoute"
+                  d="M485 205 C535 210, 570 220, 610 235" />
+
+            <!-- moving markers (JS positions them) -->
+            <circle id="mSea" r="4.8" fill="rgba(0,210,255,.95)" class="marker"></circle>
+            <circle id="mAir" r="4.2" fill="rgba(255,255,255,.92)" class="marker"></circle>
+            <circle id="mLand" r="4.2" fill="rgba(0,255,160,.92)" class="marker"></circle>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
 
 <script>
-const canvas = document.getElementById("bgCanvas");
-const ctx = canvas.getContext("2d");
+/* ===== premium starfield (subtle, not "night sky heavy") ===== */
+const stars = document.getElementById('stars');
+const sctx = stars.getContext('2d');
+let SW, SH, starArr = [];
 
-let w, h;
-function resize(){
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
+function resizeStars(){
+  SW = stars.width  = window.innerWidth * devicePixelRatio;
+  SH = stars.height = window.innerHeight * devicePixelRatio;
+  stars.style.width = window.innerWidth + "px";
+  stars.style.height = window.innerHeight + "px";
+  makeStars();
 }
-resize();
-window.addEventListener("resize", resize);
+window.addEventListener('resize', resizeStars);
 
-// ==== EARTH GLOW ====
-function drawEarth(){
-    const grd = ctx.createRadialGradient(w/2,h/2,200,w/2,h/2,800);
-    grd.addColorStop(0,"rgba(0,150,255,0.15)");
-    grd.addColorStop(1,"rgba(0,0,0,0)");
-    ctx.fillStyle = grd;
-    ctx.fillRect(0,0,w,h);
-}
-
-// ==== CONTINENT SHAPES (abstract blobs) ====
-const continents = [
-    {x:0.3,y:0.4,r:220},
-    {x:0.65,y:0.35,r:260},
-    {x:0.55,y:0.65,r:200}
-];
-
-function drawContinents(){
-    ctx.fillStyle="rgba(0,255,180,0.06)";
-    continents.forEach(c=>{
-        ctx.beginPath();
-        ctx.ellipse(w*c.x,h*c.y,c.r,c.r*0.6,0,0,Math.PI*2);
-        ctx.fill();
+function makeStars(){
+  starArr = [];
+  const count = Math.floor((window.innerWidth * window.innerHeight) / 18000); // меньше, чем "звёздное небо"
+  for(let i=0;i<count;i++){
+    starArr.push({
+      x: Math.random()*SW,
+      y: Math.random()*SH,
+      r: (Math.random()*1.2 + 0.2) * devicePixelRatio,
+      a: Math.random()*0.35 + 0.10,
+      sp: (Math.random()*0.08 + 0.02) * devicePixelRatio
     });
+  }
+}
+function drawStars(){
+  sctx.clearRect(0,0,SW,SH);
+  for(const st of starArr){
+    st.x += st.sp;
+    if(st.x > SW+10) st.x = -10;
+    sctx.beginPath();
+    sctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+    sctx.fillStyle = `rgba(255,255,255,${st.a})`;
+    sctx.fill();
+  }
+  requestAnimationFrame(drawStars);
+}
+resizeStars();
+drawStars();
+
+/* ===== routes moving markers along SVG paths ===== */
+function moveAlongPath(pathEl, markerEl, speed, phase){
+  const len = pathEl.getTotalLength();
+  return function(t){
+    const p = (t*speed + phase) % 1;
+    const pt = pathEl.getPointAtLength(p * len);
+    markerEl.setAttribute('cx', pt.x);
+    markerEl.setAttribute('cy', pt.y);
+  }
 }
 
-// ==== ROUTES ====
-function route(x1,y1,x2,y2,dash,color){
-    ctx.beginPath();
-    ctx.setLineDash(dash);
-    ctx.moveTo(x1,y1);
-    ctx.lineTo(x2,y2);
-    ctx.strokeStyle=color;
-    ctx.lineWidth=2;
-    ctx.stroke();
-    ctx.setLineDash([]);
+const routeSea  = document.getElementById('routeSea');
+const routeAir  = document.getElementById('routeAir');
+const routeLand = document.getElementById('routeLand');
+
+const mSea  = document.getElementById('mSea');
+const mAir  = document.getElementById('mAir');
+const mLand = document.getElementById('mLand');
+
+const tickSea  = moveAlongPath(routeSea,  mSea,  0.050, 0.10);
+const tickAir  = moveAlongPath(routeAir,  mAir,  0.070, 0.40);
+const tickLand = moveAlongPath(routeLand, mLand, 0.060, 0.75);
+
+let t0 = performance.now();
+function anim(){
+  const t = (performance.now()-t0)/1000;
+  tickSea(t);
+  tickAir(t);
+  tickLand(t);
+  requestAnimationFrame(anim);
 }
-
-// ==== MOVING DOTS (ships/planes/trucks) ====
-let t=0;
-function movingDot(x1,y1,x2,y2,speed,color,size){
-    const x = x1 + (x2-x1)*(Math.sin(t*speed)+1)/2;
-    const y = y1 + (y2-y1)*(Math.sin(t*speed)+1)/2;
-    ctx.beginPath();
-    ctx.arc(x,y,size,0,Math.PI*2);
-    ctx.fillStyle=color;
-    ctx.fill();
-}
-
-function animate(){
-    ctx.clearRect(0,0,w,h);
-    drawEarth();
-    drawContinents();
-
-    // SEA
-    route(w*0.3,h*0.45,w*0.65,h*0.5,[8,8],"rgba(0,200,255,0.4)");
-    movingDot(w*0.3,h*0.45,w*0.65,h*0.5,0.8,"#00d9ff",5);
-
-    // AIR
-    route(w*0.65,h*0.35,w*0.55,h*0.65,[4,12],"rgba(255,255,255,0.5)");
-    movingDot(w*0.65,h*0.35,w*0.55,h*0.65,1.2,"#ffffff",4);
-
-    // LAND
-    route(w*0.3,h*0.4,w*0.55,h*0.65,[2,10],"rgba(0,255,120,0.5)");
-    movingDot(w*0.3,h*0.4,w*0.55,h*0.65,1,"#00ff88",4);
-
-    t+=0.01;
-    requestAnimationFrame(animate);
-}
-
-animate();
+anim();
 </script>
 
 </body>
