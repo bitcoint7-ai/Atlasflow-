@@ -1,510 +1,673 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>AtlasFlow — Global Logistics</title>
 
 <style>
-  :root{
-    --bg0:#020814;
-    --bg1:#061b2b;
-    --cyan:#00eaff;
-    --mint:#00ff9a;
-    --lineSea: rgba(0,210,255,.75);
-    --lineAir: rgba(255,255,255,.75);
-    --lineLand: rgba(0,255,160,.75);
-    --landFill: rgba(0,255,170,.12);
-    --landStroke: rgba(0,255,210,.22);
-    --grid: rgba(255,255,255,.06);
-  }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif}
+html{scroll-behavior:smooth}
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    background: radial-gradient(1200px 600px at 20% 10%, rgba(0,234,255,.12), transparent 60%),
-               radial-gradient(900px 500px at 80% 20%, rgba(0,255,154,.10), transparent 55%),
-               linear-gradient(180deg, var(--bg0), var(--bg1));
-    color:#fff;
-    overflow:hidden;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  }
+:root{
+  /* Calm “corporate logistics” palette */
+  --bg0:#06121a;
+  --bg1:#071822;
+  --bg2:#061018;
 
-  /* ===== Animated background (premium dynamics) ===== */
-  .bg {
-    position:fixed; inset:0;
-    pointer-events:none;
-    z-index:-2;
-  }
-  .bg::before{
-    content:"";
-    position:absolute; inset:-30%;
-    background:
-      radial-gradient(1200px 700px at 30% 20%, rgba(0,234,255,.14), transparent 60%),
-      radial-gradient(900px 600px at 70% 30%, rgba(0,255,154,.10), transparent 55%),
-      radial-gradient(900px 700px at 50% 80%, rgba(120,80,255,.08), transparent 55%);
-    filter: blur(10px);
-    animation: driftGlow 18s ease-in-out infinite alternate;
-    opacity:.9;
-  }
-  @keyframes driftGlow{
-    0%{ transform: translate3d(-2%, -1%, 0) scale(1.02) }
-    100%{ transform: translate3d(2%, 1.5%, 0) scale(1.06) }
-  }
+  --landFill: rgba(255,255,255,.055);
+  --landStroke: rgba(255,255,255,.10);
 
-  canvas#stars{
-    position:absolute; inset:0;
-    width:100%; height:100%;
-    opacity:.22;
-    filter: blur(.2px);
-  }
+  --coast: rgba(255,255,255,.12);
+  --borders: rgba(255,255,255,.055);
 
-  /* subtle noise overlay */
-  .noise{
-    position:fixed; inset:0;
-    pointer-events:none;
-    z-index:-1;
-    opacity:.10;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-  }
+  --grid: rgba(255,255,255,.045);
 
-  /* ===== Layout ===== */
-  .wrap{
-    position:relative;
-    height:100%;
-    display:grid;
-    place-items:center;
-    padding: clamp(18px, 3vw, 42px);
-  }
+  --sea: rgba(140, 210, 255, .55);
+  --air: rgba(255,255,255,.58);
+  --landr: rgba(160, 255, 210, .45);
 
-  .hero{
-    width:min(1180px, 96vw);
-    display:grid;
-    grid-template-columns: 1.05fr .95fr;
-    gap: clamp(16px, 3vw, 34px);
-    align-items:center;
-  }
+  --glass:rgba(255,255,255,.06);
+  --glass2:rgba(255,255,255,.09);
 
-  @media (max-width: 980px){
-    .hero{grid-template-columns:1fr; text-align:center}
-  }
+  --accent: rgba(180,230,255,.88);
+}
 
-  .card{
-    border:1px solid rgba(255,255,255,.08);
-    background: rgba(10, 18, 30, .42);
-    backdrop-filter: blur(10px);
-    border-radius: 22px;
-    padding: clamp(18px, 3.2vw, 34px);
-    box-shadow: 0 20px 60px rgba(0,0,0,.35);
-  }
+body{
+  color:#fff;
+  overflow-x:hidden;
+  background:
+    radial-gradient(1200px 720px at 12% 18%, rgba(120,180,210,.10), transparent 60%),
+    radial-gradient(900px 620px at 88% 78%, rgba(90,140,180,.08), transparent 62%),
+    linear-gradient(135deg, var(--bg0), var(--bg1), var(--bg2));
+}
 
-  h1{
-    margin:0;
-    font-size: clamp(34px, 4.6vw, 64px);
-    letter-spacing: .18em;
-    text-transform:uppercase;
-    background: linear-gradient(90deg, var(--cyan), var(--mint));
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
-  .sub{
-    margin-top: 14px;
-    font-size: clamp(14px, 1.4vw, 18px);
-    color: rgba(255,255,255,.82);
-    line-height:1.55;
-  }
+/* ===== PRELOADER ===== */
+#preloader{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(120,180,210,.10), transparent 45%),
+    radial-gradient(circle at 70% 70%, rgba(120,180,210,.06), transparent 50%),
+    #071017;
+  transition:opacity .5s ease, visibility .5s ease;
+}
+#preloader.hide{opacity:0; visibility:hidden}
+.loaderWrap{display:flex; flex-direction:column; align-items:center; gap:14px}
+.loader{
+  width:64px; height:64px; border-radius:50%;
+  border:3px solid rgba(255,255,255,.12);
+  border-top-color: rgba(180,230,255,.85);
+  box-shadow:0 0 24px rgba(120,180,210,.18);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loaderText{opacity:.85; letter-spacing:.5px; font-size:14px}
 
-  .chips{
-    margin-top: 18px;
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-  }
-  @media (max-width:980px){
-    .chips{justify-content:center}
-  }
-  .chip{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding: 10px 12px;
-    border-radius: 999px;
-    border:1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.06);
-    font-size: 13px;
-    color: rgba(255,255,255,.85);
-  }
-  .dot{
-    width:10px; height:10px; border-radius:50%;
-    box-shadow: 0 0 18px rgba(0,0,0,.0);
-  }
-  .sea{ background: rgba(0,210,255,.95); box-shadow:0 0 16px rgba(0,210,255,.35) }
-  .air{ background: rgba(255,255,255,.95); box-shadow:0 0 16px rgba(255,255,255,.25) }
-  .land{ background: rgba(0,255,160,.95); box-shadow:0 0 16px rgba(0,255,160,.28) }
+/* ===== FX LAYERS ===== */
+.fx{ position:fixed; inset:0; pointer-events:none; z-index:0; }
+#mapLayer{ position:absolute; inset:0; opacity:.94; }
+#particles{ position:absolute; inset:0; opacity:.50; }
 
-  .ctaRow{
-    margin-top: 22px;
-    display:flex;
-    gap:12px;
-    align-items:center;
-    flex-wrap:wrap;
-  }
-  @media (max-width:980px){
-    .ctaRow{justify-content:center}
-  }
-  .btn{
-    border:none;
-    cursor:pointer;
-    border-radius: 999px;
-    padding: 14px 22px;
-    font-weight: 700;
-    color:#001018;
-    background: linear-gradient(90deg, var(--cyan), var(--mint));
-    transition: transform .2s ease, filter .2s ease;
-  }
-  .btn:hover{ transform: translateY(-1px) scale(1.02); filter: brightness(1.03) }
-  .btn2{
-    border-radius: 999px;
-    padding: 14px 18px;
-    border:1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.06);
-    color: rgba(255,255,255,.86);
-    cursor:pointer;
-    transition: transform .2s ease, background .2s ease;
-  }
-  .btn2:hover{ transform: translateY(-1px); background: rgba(255,255,255,.09) }
+/* ===== TOP NAV ===== */
+.nav{
+  position:sticky; top:0; z-index:50;
+  background:rgba(5,12,18,.45);
+  backdrop-filter: blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.navInner{
+  max-width:1100px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 18px;
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:1px}
+.dot{
+  width:10px; height:10px; border-radius:50%;
+  background:rgba(180,230,255,.85);
+  box-shadow:0 0 14px rgba(140,210,255,.22);
+}
+.nav a{
+  color:#fff; text-decoration:none; opacity:.85; margin-left:16px; font-size:14px;
+  transition:.25s;
+}
+.nav a:hover{opacity:1; color:rgba(200,240,255,.9)}
 
-  /* ===== Globe / Map ===== */
-  .globeBox{
-    position:relative;
-    overflow:hidden;
-    min-height: clamp(330px, 46vw, 520px);
-  }
+/* ===== HERO ===== */
+.hero{
+  position:relative; z-index:1;
+  min-height:92vh;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  text-align:center;
+  padding:60px 18px 30px;
+  overflow:hidden;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(140,210,255,.12), transparent 55%),
+    radial-gradient(circle at 80% 70%, rgba(140,210,255,.08), transparent 60%);
+  filter: blur(30px);
+  z-index:-2;
+}
 
-  .globe{
-    width:100%;
-    height:100%;
-    display:block;
-    transform: translateZ(0);
-  }
+.logoWrap{
+  width:118px;height:118px;border-radius:32px;
+  display:grid; place-items:center;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow:0 20px 60px rgba(0,0,0,.22);
+  animation:float 4s ease-in-out infinite;
+  margin-bottom:22px;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 
-  .glowRing{
-    position:absolute;
-    inset:-12%;
-    border-radius: 999px;
-    background: radial-gradient(circle at 50% 50%,
-      rgba(0,234,255,.18), transparent 50%),
-      radial-gradient(circle at 55% 60%,
-      rgba(0,255,154,.12), transparent 55%);
-    filter: blur(12px);
-    opacity:.8;
-    animation: ring 10s ease-in-out infinite alternate;
-  }
-  @keyframes ring{
-    0%{ transform: translate3d(-1.5%, -1%, 0) scale(1.01) }
-    100%{ transform: translate3d(1.3%, 1.2%, 0) scale(1.06) }
-  }
+/* CSS globe mark */
+.globe{
+  width:62px;height:62px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.22);
+  position:relative;
+  box-shadow:0 0 22px rgba(140,210,255,.10);
+}
+.globe::before, .globe::after{
+  content:""; position:absolute; inset:10px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:50%;
+}
+.globe::after{
+  inset:auto; left:10px; right:10px; top:50%;
+  height:1px; border:none; background:rgba(255,255,255,.15);
+}
+.globeLines{position:absolute; inset:0}
+.globeLines span{
+  position:absolute; top:8px; bottom:8px; width:1px;
+  background:rgba(255,255,255,.10);
+}
+.globeLines span:nth-child(1){left:22px}
+.globeLines span:nth-child(2){left:50%; transform:translateX(-50%); background:rgba(180,230,255,.28)}
+.globeLines span:nth-child(3){right:22px}
 
-  /* routes dash animation */
-  .route{
-    fill:none;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 10px rgba(0,0,0,.0));
-  }
-  .seaRoute{ stroke: var(--lineSea); stroke-width:2.2; stroke-dasharray: 10 10; animation: dash 2.6s linear infinite; }
-  .airRoute{ stroke: var(--lineAir); stroke-width:2.0; stroke-dasharray: 6 14;  animation: dash 2.1s linear infinite; opacity:.9;}
-  .landRoute{stroke: var(--lineLand);stroke-width:2.0; stroke-dasharray: 4 12;  animation: dash 2.3s linear infinite; opacity:.85;}
+h1{
+  font-size:56px; letter-spacing:3px;
+  margin-bottom:14px;
+  opacity:0; transform:translateY(26px);
+  animation:fadeUp 1.0s ease forwards;
+  background: linear-gradient(90deg, rgba(210,245,255,.92), rgba(160,220,245,.70));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+@keyframes fadeUp{to{opacity:1; transform:translateY(0)}}
 
-  @keyframes dash{
-    to { stroke-dashoffset: -220; }
-  }
+p.lead{
+  font-size:18px; max-width:760px; opacity:.84; line-height:1.55;
+  opacity:0; transform:translateY(26px);
+  animation:fadeUp 1.4s ease forwards;
+}
 
-  /* marker glow */
-  .marker{
-    filter: drop-shadow(0 0 12px rgba(0,234,255,.35));
-  }
+.ctaRow{display:flex; gap:14px; flex-wrap:wrap; justify-content:center; margin-top:28px}
+.btn{
+  padding:13px 34px; border-radius:40px;
+  border:1.5px solid rgba(180,230,255,.65);
+  color:rgba(220,250,255,.90);
+  text-decoration:none; font-size:16px;
+  transition:.35s; display:inline-block;
+  background: rgba(255,255,255,.03);
+}
+.btn:hover{background: rgba(180,230,255,.12); box-shadow:0 0 18px rgba(140,210,255,.20)}
+.btn.secondary{border-color:rgba(255,255,255,.18); color:#fff; opacity:.86}
+.btn.secondary:hover{background:rgba(255,255,255,.08); box-shadow:none}
 
-  /* map motion (subtle, like real globe drift) */
-  .mapDrift{
-    transform-origin: 50% 50%;
-    animation: mapFloat 12s ease-in-out infinite alternate;
-  }
-  @keyframes mapFloat{
-    0%{ transform: translate3d(-1.1%, .3%, 0) scale(1.01) }
-    100%{ transform: translate3d(1.0%, -.5%, 0) scale(1.03) }
-  }
+/* ===== SECTIONS ===== */
+.section{position:relative; z-index:1; padding:90px 18px; text-align:center}
+.section h2{font-size:30px; letter-spacing:1px}
+.sub{margin-top:10px; opacity:.78; max-width:860px; margin-left:auto; margin-right:auto; line-height:1.6}
 
-  /* accessibility */
-  @media (prefers-reduced-motion: reduce){
-    .bg::before, .glowRing, .mapDrift, .seaRoute, .airRoute, .landRoute{ animation:none !important; }
-  }
+.cards{
+  display:flex; justify-content:center; gap:22px;
+  flex-wrap:wrap; margin-top:52px;
+}
+.card{
+  width:280px; padding:28px; border-radius:22px;
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(12px);
+  transition:.35s;
+  opacity:0; transform:translateY(40px);
+}
+.card.show{opacity:1; transform:translateY(0); transition:1s}
+.card:hover{
+  transform:translateY(-10px) scale(1.03);
+  background:var(--glass2);
+  box-shadow:0 22px 50px rgba(0,0,0,.24);
+}
+.card h3{margin-bottom:10px; color:rgba(200,240,255,.92); font-size:18px}
+.card p{opacity:.85; line-height:1.55; font-size:14.5px}
+
+/* Contact chips */
+.chips{display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:22px}
+.chip{
+  padding:12px 18px; border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(0,0,0,.12);
+  text-decoration:none; color:#fff; opacity:.9;
+  transition:.25s;
+}
+.chip:hover{opacity:1; border-color:rgba(180,230,255,.35); box-shadow:0 0 18px rgba(140,210,255,.10)}
+
+/* Footer */
+.footer{
+  position:relative; z-index:1;
+  padding:30px 18px 44px;
+  text-align:center;
+  opacity:.7;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+/* responsive */
+@media (max-width:520px){
+  h1{font-size:40px}
+  .logoWrap{width:100px;height:100px}
+  .btn{padding:12px 26px}
+}
+
+/* ===== Map SVG styling ===== */
+#mapSvg .oceanFog{
+  animation: fog 20s ease-in-out infinite alternate;
+  transform-origin: 50% 50%;
+}
+@keyframes fog{
+  0%{transform:translate(-1.1%, -0.7%) scale(1.02); opacity:.50}
+  100%{transform:translate(1.0%, 0.8%) scale(1.05); opacity:.66}
+}
+#mapSvg .graticule{
+  fill:none;
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+#mapSvg .land{
+  fill: var(--landFill);
+  stroke: var(--landStroke);
+  stroke-width: 0.9;
+}
+#mapSvg .coast{
+  fill:none;
+  stroke: var(--coast);
+  stroke-width: 0.9;
+  opacity:.55;
+}
+#mapSvg .borders{
+  fill:none;
+  stroke: var(--borders);
+  stroke-width: 0.8;
+  opacity:.55;
+}
+#mapSvg .route{
+  fill:none;
+  stroke-linecap:round;
+  filter: drop-shadow(0 0 10px rgba(140,210,255,.10));
+}
+#mapSvg .sea{ stroke: var(--sea); stroke-width:1.9; stroke-dasharray: 10 18; animation: dash 3.6s linear infinite; }
+#mapSvg .air{ stroke: var(--air); stroke-width:2.1; stroke-dasharray: 12 18; animation: dash 3.0s linear infinite; }
+#mapSvg .landr{ stroke: var(--landr); stroke-width:1.8; stroke-dasharray: 8 16; animation: dash 3.3s linear infinite; opacity:.80;}
+@keyframes dash{ to { stroke-dashoffset: -320; } }
+
+#mapSvg .hub{ fill: var(--accent); opacity:.95; }
+#mapSvg .pulse{ fill:none; stroke: var(--accent); stroke-width:1.7; opacity:.45; transform-origin:center; animation:pulse 2.2s ease-out infinite; }
+@keyframes pulse{ 0%{transform:scale(.7); opacity:.55} 100%{transform:scale(2.5); opacity:0} }
+
+/* “live tail” effect = bright head + soft tail dots */
+#mapSvg .cargoHead{
+  fill: var(--accent);
+  filter: drop-shadow(0 0 12px rgba(140,210,255,.22));
+}
+#mapSvg .cargoTail{
+  fill: rgba(180,230,255,.35);
+}
+#mapSvg .cargoHead.airC{ fill: rgba(255,255,255,.86); }
+#mapSvg .cargoTail.airC{ fill: rgba(255,255,255,.26); }
+#mapSvg .cargoHead.landC{ fill: rgba(170,255,220,.78); }
+#mapSvg .cargoTail.landC{ fill: rgba(170,255,220,.22); }
 </style>
 </head>
 
 <body>
-  <div class="bg">
-    <canvas id="stars"></canvas>
+
+<!-- Preloader -->
+<div id="preloader">
+  <div class="loaderWrap">
+    <div class="loader"></div>
+    <div class="loaderText">Loading AtlasFlow…</div>
   </div>
-  <div class="noise"></div>
+</div>
 
-  <div class="wrap">
-    <div class="hero">
-      <div class="card">
-        <h1>ATLASFLOW</h1>
-        <div class="sub">
-          Global logistics flow between <b>China</b>, <b>EU</b> & <b>Thailand</b> — sea, air and land routes,
-          tracked and optimized end-to-end.
-        </div>
+<!-- FX layers -->
+<div class="fx">
+  <div id="mapLayer">
+    <svg id="mapSvg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#061018" />
+          <stop offset="0.55" stop-color="#071822" />
+          <stop offset="1" stop-color="#061018" />
+        </linearGradient>
+      </defs>
 
-        <div class="chips">
-          <div class="chip"><span class="dot sea"></span>Sea freight • ferries • lanes</div>
-          <div class="chip"><span class="dot air"></span>Air freight • express</div>
-          <div class="chip"><span class="dot land"></span>Land freight • trucking</div>
-        </div>
+      <rect width="1200" height="600" fill="url(#ocean)"/>
+      <g class="oceanFog">
+        <circle cx="260" cy="150" r="230" fill="rgba(140,210,255,.05)"/>
+        <circle cx="420" cy="110" r="160" fill="rgba(140,210,255,.035)"/>
+        <circle cx="980" cy="430" r="280" fill="rgba(140,210,255,.04)"/>
+        <circle cx="980" cy="130" r="230" fill="rgba(255,255,255,.025)"/>
+        <circle cx="170" cy="470" r="260" fill="rgba(255,255,255,.02)"/>
+      </g>
 
-        <div class="ctaRow">
-          <button class="btn">Start Shipping</button>
-          <button class="btn2" onclick="window.scrollTo({top:0,behavior:'smooth'})">Contact</button>
-        </div>
-      </div>
+      <path id="graticulePath" class="graticule"></path>
 
-      <div class="card globeBox">
-        <div class="glowRing"></div>
+      <!-- land fill -->
+      <g id="landGroup"></g>
 
-        <!-- SVG globe with “realistic” continents outlines + dynamic dotted routes -->
-        <svg class="globe" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg" aria-label="AtlasFlow globe">
-          <defs>
-            <!-- circular globe mask -->
-            <mask id="globeMask">
-              <rect width="100%" height="100%" fill="black"/>
-              <circle cx="450" cy="280" r="240" fill="white"/>
-            </mask>
+      <!-- coastlines + borders (thin) -->
+      <path id="coastPath" class="coast"></path>
+      <path id="borderPath" class="borders"></path>
 
-            <!-- ocean gradient -->
-            <radialGradient id="ocean" cx="50%" cy="45%" r="65%">
-              <stop offset="0%" stop-color="rgba(0,234,255,0.18)"/>
-              <stop offset="55%" stop-color="rgba(0,80,140,0.18)"/>
-              <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
-            </radialGradient>
+      <!-- Routes -->
+      <path id="routeSea" class="route sea"></path>
+      <path id="routeAir" class="route air"></path>
+      <path id="routeLand" class="route landr"></path>
 
-            <!-- subtle grid -->
-            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
-              <path d="M 28 0 L 0 0 0 28" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1"/>
-            </pattern>
+      <!-- Cargo “live tail” (3 tails per route) -->
+      <g id="cargoSeaG">
+        <circle class="cargoTail" r="2.4"></circle>
+        <circle class="cargoTail" r="2.0"></circle>
+        <circle class="cargoTail" r="1.6"></circle>
+        <circle class="cargoHead" r="3.2"></circle>
+      </g>
+      <g id="cargoAirG">
+        <circle class="cargoTail airC" r="2.6"></circle>
+        <circle class="cargoTail airC" r="2.2"></circle>
+        <circle class="cargoTail airC" r="1.8"></circle>
+        <circle class="cargoHead airC" r="3.8"></circle>
+      </g>
+      <g id="cargoLandG">
+        <circle class="cargoTail landC" r="2.2"></circle>
+        <circle class="cargoTail landC" r="1.8"></circle>
+        <circle class="cargoTail landC" r="1.5"></circle>
+        <circle class="cargoHead landC" r="3.0"></circle>
+      </g>
 
-            <!-- vignette -->
-            <radialGradient id="vignette" cx="50%" cy="50%" r="60%">
-              <stop offset="55%" stop-color="rgba(0,0,0,0)"/>
-              <stop offset="100%" stop-color="rgba(0,0,0,.45)"/>
-            </radialGradient>
-          </defs>
+      <!-- Hubs -->
+      <g id="hubs"></g>
+    </svg>
+  </div>
 
-          <!-- globe base -->
-          <g mask="url(#globeMask)">
-            <rect width="900" height="560" fill="rgba(6,20,34,.55)"/>
-            <circle cx="450" cy="280" r="260" fill="url(#ocean)"/>
+  <canvas id="particles"></canvas>
+</div>
 
-            <!-- grid inside globe -->
-            <g opacity=".22">
-              <rect x="0" y="0" width="900" height="560" fill="url(#grid)"/>
-            </g>
+<!-- Nav -->
+<header class="nav">
+  <div class="navInner">
+    <div class="brand"><span class="dot"></span> ATLASFLOW</div>
+    <nav>
+      <a href="#services">Services</a>
+      <a href="#routesSec">Routes</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
 
-            <!-- continents group (detailed outlines) -->
-            <g class="mapDrift">
-              <!-- NOTE:
-                   These are custom SVG continent-like silhouettes (more detailed than blobs),
-                   tuned to look like a real world map while remaining lightweight. -->
-              <g fill="var(--landFill)" stroke="var(--landStroke)" stroke-width="1.4">
-                <!-- North America -->
-                <path d="M165,140
-                         C150,120 155,98 180,92
-                         C205,86 220,98 238,92
-                         C255,86 262,70 285,70
-                         C305,70 312,86 305,100
-                         C295,118 308,130 330,136
-                         C350,142 360,160 348,175
-                         C334,193 312,192 300,206
-                         C286,224 300,240 284,258
-                         C270,276 240,270 226,252
-                         C212,236 200,230 184,218
-                         C168,206 154,196 150,176
-                         C146,158 178,156 165,140 Z"/>
-                <!-- Greenland -->
-                <path d="M290,62
-                         C305,48 330,48 346,62
-                         C362,76 350,98 332,104
-                         C312,110 286,86 290,62 Z"/>
-                <!-- South America -->
-                <path d="M300,270
-                         C326,260 352,270 360,292
-                         C368,316 350,330 350,354
-                         C350,380 368,404 352,424
-                         C334,446 310,436 304,412
-                         C298,388 284,378 286,354
-                         C288,330 270,282 300,270 Z"/>
-
-                <!-- Europe -->
-                <path d="M430,168
-                         C450,156 474,154 492,166
-                         C506,176 520,172 532,182
-                         C546,194 532,212 514,214
-                         C494,216 486,232 468,230
-                         C450,228 436,216 426,204
-                         C416,192 414,178 430,168 Z"/>
-                <!-- Africa -->
-                <path d="M474,232
-                         C502,224 528,236 540,262
-                         C552,288 536,308 540,332
-                         C544,360 558,390 534,410
-                         C510,430 486,418 478,394
-                         C470,370 452,356 452,330
-                         C452,304 446,244 474,232 Z"/>
-
-                <!-- Asia -->
-                <path d="M520,150
-                         C548,132 590,132 618,154
-                         C640,172 664,166 686,176
-                         C708,186 722,204 712,224
-                         C700,246 672,244 654,256
-                         C632,270 622,292 594,292
-                         C566,292 554,274 534,262
-                         C512,248 502,222 514,202
-                         C526,182 506,166 520,150 Z"/>
-                <!-- India -->
-                <path d="M594,292
-                         C610,290 626,306 624,320
-                         C622,336 602,344 590,336
-                         C578,328 578,294 594,292 Z"/>
-                <!-- SE Asia -->
-                <path d="M640,282
-                         C656,282 670,294 672,310
-                         C674,326 660,332 652,326
-                         C644,320 630,298 640,282 Z"/>
-                <!-- Australia -->
-                <path d="M700,360
-                         C726,350 754,362 764,384
-                         C774,406 760,422 738,428
-                         C716,434 692,420 690,398
-                         C688,376 676,370 700,360 Z"/>
-                <!-- Japan -->
-                <path d="M716,214
-                         C724,206 734,214 732,224
-                         C730,234 720,236 716,228
-                         C712,220 708,222 716,214 Z"/>
-              </g>
-
-              <!-- soft coastline highlight -->
-              <g opacity=".22">
-                <path d="M0,0H900V560H0Z" fill="transparent"/>
-              </g>
-            </g>
-
-            <!-- vignette in globe -->
-            <circle cx="450" cy="280" r="245" fill="url(#vignette)" opacity=".9"/>
-          </g>
-
-          <!-- globe edge -->
-          <circle cx="450" cy="280" r="240" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="2"/>
-
-          <!-- ROUTES overlay -->
-          <g>
-            <!-- Sea route: EU -> Thailand (примерно) -->
-            <path id="routeSea" class="route seaRoute"
-                  d="M485 250 C520 300, 560 330, 610 360" />
-            <!-- Air route: China/Asia -> EU -->
-            <path id="routeAir" class="route airRoute"
-                  d="M610 230 C585 195, 540 165, 500 180" />
-            <!-- Land route: EU -> Asia (через сушу) -->
-            <path id="routeLand" class="route landRoute"
-                  d="M485 205 C535 210, 570 220, 610 235" />
-
-            <!-- moving markers (JS positions them) -->
-            <circle id="mSea" r="4.8" fill="rgba(0,210,255,.95)" class="marker"></circle>
-            <circle id="mAir" r="4.2" fill="rgba(255,255,255,.92)" class="marker"></circle>
-            <circle id="mLand" r="4.2" fill="rgba(0,255,160,.92)" class="marker"></circle>
-          </g>
-        </svg>
-      </div>
+<!-- Hero -->
+<section class="hero">
+  <div class="logoWrap" aria-hidden="true">
+    <div class="globe">
+      <div class="globeLines"><span></span><span></span><span></span></div>
     </div>
   </div>
 
+  <h1 id="typeTitle"></h1>
+  <p class="lead">
+    Global logistics flow between China, EU & Thailand. Smart routing, tracking-ready operations, and fast coordination.
+  </p>
+
+  <div class="ctaRow">
+    <a class="btn" href="#services">Explore Services</a>
+    <a class="btn secondary" href="#contact">Get a Quote</a>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services" class="section">
+  <h2>Our Services</h2>
+  <p class="sub">Air, sea, and local distribution — built for fast communication and transparent flow from pickup to delivery.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Air Cargo</h3>
+      <p>Fast international delivery with optimized air routes and priority handling.</p>
+    </div>
+    <div class="card">
+      <h3>Sea Freight</h3>
+      <p>Cost-effective container logistics for stable and scalable cross-border shipping.</p>
+    </div>
+    <div class="card">
+      <h3>Warehousing</h3>
+      <p>Secure storage & distribution hubs in key locations across EU and SEA.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Routes section -->
+<section id="routesSec" class="section">
+  <h2>Optimized Routes</h2>
+  <p class="sub">We connect regions with clear handoffs and predictable delivery windows — built for business operations.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h3>EU ⇄ Thailand</h3>
+      <p>Consolidation, customs-ready documentation, and last-mile coordination.</p>
+    </div>
+    <div class="card">
+      <h3>China ⇄ EU</h3>
+      <p>Supplier pickup → consolidation → shipping → destination delivery support.</p>
+    </div>
+    <div class="card">
+      <h3>China ⇄ Thailand</h3>
+      <p>Fast lanes for e-commerce goods and regular cargo shipments.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section id="contact" class="section">
+  <h2>Contact</h2>
+  <p class="sub">Send route + cargo details — we’ll reply with options and pricing.</p>
+
+  <div class="chips">
+    <a class="chip" href="mailto:info@atlasflow.org">info@atlasflow.org</a>
+    <a class="chip" href="#services">Services</a>
+    <a class="chip" href="#routesSec">Routes</a>
+  </div>
+</section>
+
+<div class="footer">
+  © <span id="y"></span> AtlasFlow. All rights reserved.
+</div>
+
+<!-- D3 + topojson for REAL map -->
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
 <script>
-/* ===== premium starfield (subtle, not "night sky heavy") ===== */
-const stars = document.getElementById('stars');
-const sctx = stars.getContext('2d');
-let SW, SH, starArr = [];
+/* ===== Preloader ===== */
+window.addEventListener('load', () => {
+  const p = document.getElementById('preloader');
+  setTimeout(()=>p.classList.add('hide'), 450);
+});
 
-function resizeStars(){
-  SW = stars.width  = window.innerWidth * devicePixelRatio;
-  SH = stars.height = window.innerHeight * devicePixelRatio;
-  stars.style.width = window.innerWidth + "px";
-  stars.style.height = window.innerHeight + "px";
-  makeStars();
+/* ===== Year ===== */
+document.getElementById('y').textContent = new Date().getFullYear();
+
+/* ===== Typewriter title ===== */
+const titleText = "ATLASFLOW";
+const titleEl = document.getElementById("typeTitle");
+let ti = 0;
+function typeTitle(){
+  if(ti <= titleText.length){
+    titleEl.textContent = titleText.slice(0, ti);
+    ti++;
+    setTimeout(typeTitle, 75);
+  }
 }
-window.addEventListener('resize', resizeStars);
+typeTitle();
 
-function makeStars(){
-  starArr = [];
-  const count = Math.floor((window.innerWidth * window.innerHeight) / 18000); // меньше, чем "звёздное небо"
-  for(let i=0;i<count;i++){
-    starArr.push({
-      x: Math.random()*SW,
-      y: Math.random()*SH,
-      r: (Math.random()*1.2 + 0.2) * devicePixelRatio,
-      a: Math.random()*0.35 + 0.10,
-      sp: (Math.random()*0.08 + 0.02) * devicePixelRatio
+/* ===== Scroll reveal cards ===== */
+const cards = document.querySelectorAll('.card');
+const reveal = () => {
+  cards.forEach(c => {
+    const top = c.getBoundingClientRect().top;
+    if(top < window.innerHeight - 90) c.classList.add('show');
+  });
+};
+window.addEventListener('scroll', reveal);
+reveal();
+
+/* ===== Particles (very subtle) ===== */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
+
+const PCOUNT = Math.min(44, Math.floor(window.innerWidth / 36));
+const ps = [];
+for(let i=0;i<PCOUNT;i++){
+  ps.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: 0.6 + Math.random()*1.5,
+    vx: -0.04 + Math.random()*0.08,
+    vy: -0.025 + Math.random()*0.05,
+    a: 0.035 + Math.random()*0.08
+  });
+}
+function step(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(const p of ps){
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < -20) p.x = canvas.width+20;
+    if(p.x > canvas.width+20) p.x = -20;
+    if(p.y < -20) p.y = canvas.height+20;
+    if(p.y > canvas.height+20) p.y = -20;
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(190,230,245,${p.a})`;
+    ctx.fill();
+  }
+  for(let i=0;i<ps.length;i++){
+    for(let j=i+1;j<ps.length;j++){
+      const dx = ps[i].x-ps[j].x;
+      const dy = ps[i].y-ps[j].y;
+      const d2 = dx*dx+dy*dy;
+      if(d2 < 110*110){
+        const alpha = 0.032*(1 - d2/(110*110));
+        ctx.strokeStyle = `rgba(190,230,245,${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(ps[i].x,ps[i].y);
+        ctx.lineTo(ps[j].x,ps[j].y);
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(step);
+}
+step();
+
+/* ===== REAL MAP + coastlines + borders + “tail” routes ===== */
+(async function(){
+  const W = 1200, H = 600;
+
+  // countries (fill)
+  const topoCountries = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(r=>r.json());
+  const countries = topojson.feature(topoCountries, topoCountries.objects.countries);
+
+  // land (coastline) + borders (thin lines)
+  const topoLand = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json").then(r=>r.json());
+  const land = topojson.feature(topoLand, topoLand.objects.land);
+
+  const projection = d3.geoEquirectangular()
+    .fitSize([W, H], {type:"Sphere"});
+  const geoPath = d3.geoPath(projection);
+
+  // graticule
+  const gr = d3.geoGraticule10();
+  document.getElementById("graticulePath").setAttribute("d", geoPath(gr));
+
+  // land fill (countries)
+  const landGroup = d3.select("#landGroup");
+  landGroup.selectAll("path")
+    .data(countries.features)
+    .join("path")
+    .attr("class","land")
+    .attr("d", geoPath);
+
+  // coastline
+  document.getElementById("coastPath").setAttribute("d", geoPath(land));
+
+  // borders from countries topology
+  const borders = topojson.mesh(topoCountries, topoCountries.objects.countries, (a,b)=>a!==b);
+  document.getElementById("borderPath").setAttribute("d", geoPath(borders));
+
+  // hubs
+  const HUBS = [
+    {name:"EU", lon: 9.99,  lat:53.55},    // Hamburg
+    {name:"China", lon:121.47,lat:31.23},  // Shanghai
+    {name:"Thailand", lon:100.50,lat:13.75},// Bangkok
+  ];
+  const hubs = d3.select("#hubs");
+  hubs.selectAll("g")
+    .data(HUBS)
+    .join("g")
+    .attr("transform", d=>{
+      const [x,y] = projection([d.lon,d.lat]);
+      return `translate(${x} ${y})`;
+    })
+    .each(function(){
+      const g = d3.select(this);
+      g.append("circle").attr("class","hub").attr("r",4.0);
+      g.append("circle").attr("class","pulse").attr("r",8.0);
     });
+
+  function pt(lon,lat){
+    const [x,y] = projection([lon,lat]);
+    return {x,y};
   }
-}
-function drawStars(){
-  sctx.clearRect(0,0,SW,SH);
-  for(const st of starArr){
-    st.x += st.sp;
-    if(st.x > SW+10) st.x = -10;
-    sctx.beginPath();
-    sctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-    sctx.fillStyle = `rgba(255,255,255,${st.a})`;
-    sctx.fill();
+  const EU = pt(9.99,53.55);
+  const CN = pt(121.47,31.23);
+  const TH = pt(100.50,13.75);
+
+  function curve(a,b,bend){
+    const cx = (a.x+b.x)/2;
+    const cy = (a.y+b.y)/2 - bend;
+    return `M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${cx.toFixed(1)} ${cy.toFixed(1)}, ${cx.toFixed(1)} ${cy.toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
   }
-  requestAnimationFrame(drawStars);
-}
-resizeStars();
-drawStars();
 
-/* ===== routes moving markers along SVG paths ===== */
-function moveAlongPath(pathEl, markerEl, speed, phase){
-  const len = pathEl.getTotalLength();
-  return function(t){
-    const p = (t*speed + phase) % 1;
-    const pt = pathEl.getPointAtLength(p * len);
-    markerEl.setAttribute('cx', pt.x);
-    markerEl.setAttribute('cy', pt.y);
+  // routes
+  const seaD  = curve(CN, EU, -22);
+  const airD  = curve(EU, TH,  62);
+  const landD = curve(CN, TH,  38);
+
+  document.getElementById("routeSea").setAttribute("d", seaD);
+  document.getElementById("routeAir").setAttribute("d", airD);
+  document.getElementById("routeLand").setAttribute("d", landD);
+
+  // Tail animation helper: positions 4 circles (3 tail + head)
+  function animateTail(pathId, groupId, durationMs, delayMs=0){
+    const pathEl = document.getElementById(pathId);
+    const g = document.getElementById(groupId);
+    if(!pathEl || !g) return;
+
+    const circles = g.querySelectorAll("circle");
+    const len = pathEl.getTotalLength();
+    const start = performance.now() + delayMs;
+
+    // offsets behind head (fractions of path)
+    const back = [0.030, 0.055, 0.085, 0.0]; // last is head
+    function frame(now){
+      const t = ((now - start) % durationMs + durationMs) % durationMs;
+      const p = t / durationMs;
+
+      // place tail dots first, head last
+      circles.forEach((c, idx)=>{
+        const off = back[idx] || 0;
+        let pp = p - off;
+        if(pp < 0) pp += 1;
+        const pos = pathEl.getPointAtLength(pp * len);
+        c.setAttribute("cx", pos.x);
+        c.setAttribute("cy", pos.y);
+        // fade tail dots
+        if(idx < 3){
+          c.setAttribute("opacity", String(0.32 - idx*0.08));
+        }else{
+          c.setAttribute("opacity", "0.95");
+        }
+      });
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   }
-}
 
-const routeSea  = document.getElementById('routeSea');
-const routeAir  = document.getElementById('routeAir');
-const routeLand = document.getElementById('routeLand');
-
-const mSea  = document.getElementById('mSea');
-const mAir  = document.getElementById('mAir');
-const mLand = document.getElementById('mLand');
-
-const tickSea  = moveAlongPath(routeSea,  mSea,  0.050, 0.10);
-const tickAir  = moveAlongPath(routeAir,  mAir,  0.070, 0.40);
-const tickLand = moveAlongPath(routeLand, mLand, 0.060, 0.75);
-
-let t0 = performance.now();
-function anim(){
-  const t = (performance.now()-t0)/1000;
-  tickSea(t);
-  tickAir(t);
-  tickLand(t);
-  requestAnimationFrame(anim);
-}
-anim();
+  animateTail("routeSea","cargoSeaG", 9800, 300);
+  animateTail("routeAir","cargoAirG", 6600, 900);
+  animateTail("routeLand","cargoLandG", 8200, 600);
+})();
 </script>
 
 </body>
