@@ -1,636 +1,368 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AtlasFlow — VIP Global Logistics</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AtlasFlow — VIP Global Logistics</title>
 
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <style>
-    /* =============================
-       AtlasFlow V2 — Luxury System
-       ============================= */
-    :root{
-      --bg0:#050b12;
-      --bg1:#07131c;
-      --bg2:#03070c;
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<style>
+:root{
+--bg0:#050b12;
+--bg1:#07131c;
+--white:#ffffff;
+--muted:rgba(255,255,255,.75);
+--line:rgba(255,255,255,.08);
+--accent:rgba(170,230,255,.9);
+--radius:22px;
+--shadow:0 30px 90px rgba(0,0,0,.45);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+color:var(--white);
+background:
+radial-gradient(900px 600px at 80% -10%, rgba(120,215,255,.15), transparent 60%),
+linear-gradient(180deg,var(--bg0),#02060b);
+overflow-x:hidden;
+}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1200px;margin:auto;padding:0 20px}
 
-      --white:#ffffff;
-      --muted:rgba(255,255,255,.78);
-      --muted2:rgba(255,255,255,.62);
+.topbar{
+position:fixed;top:0;width:100%;z-index:10;
+backdrop-filter:blur(12px);
+background:rgba(5,11,18,.6);
+border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+display:flex;justify-content:space-between;align-items:center;
+padding:16px 0;
+}
+.brand{
+letter-spacing:.2em;
+text-transform:uppercase;
+font-weight:700;
+font-size:13px;
+opacity:.9;
+}
+.nav{
+display:flex;gap:20px;font-size:14px;color:var(--muted);
+}
+.nav a:hover{color:white}
+.cta{
+border:1px solid rgba(120,215,255,.4);
+padding:10px 18px;
+border-radius:999px;
+font-weight:700;
+background:linear-gradient(180deg,rgba(120,215,255,.25),rgba(255,255,255,.06));
+}
 
-      --glass:rgba(255,255,255,.06);
-      --glass2:rgba(255,255,255,.10);
-      --line:rgba(255,255,255,.10);
-      --line2:rgba(255,255,255,.06);
+.hero{
+padding-top:120px;
+padding-bottom:80px;
+text-align:center;
+position:relative;
+isolation:isolate;
+}
 
-      --accent:rgba(180,235,255,.95);
-      --aqua:rgba(120,215,255,.45);
+/* ===========================
+   Subtle Transport Background
+   =========================== */
+.transport-bg{
+position:absolute;
+inset:0;
+z-index:-1;
+pointer-events:none;
+overflow:hidden;
+}
+.transport-bg::before{
+content:"";
+position:absolute; inset:-40%;
+background:
+radial-gradient(800px 500px at 20% 10%, rgba(120,215,255,.12), transparent 60%),
+radial-gradient(900px 600px at 70% 30%, rgba(120,215,255,.09), transparent 65%),
+radial-gradient(700px 500px at 50% 80%, rgba(255,255,255,.05), transparent 60%);
+filter: blur(0px);
+opacity:.9;
+}
 
-      --shadow: 0 24px 90px rgba(0,0,0,.45);
-      --shadow2: 0 14px 50px rgba(0,0,0,.35);
+/* one “lane” for moving icons */
+.transport-lane{
+position:absolute;
+left:-30%;
+right:-30%;
+top:92px; /* sits behind heading area */
+height:260px;
+opacity:.55;
+}
 
-      --radius: 18px;
-      --radius2: 26px;
+/* each icon layer */
+.transport-item{
+position:absolute;
+top:20px;
+left:-20%;
+width:280px;
+height:140px;
+opacity:0;
+transform:translate3d(0,0,0);
+filter: drop-shadow(0 18px 55px rgba(0,0,0,.45));
+}
+.transport-item svg{
+width:100%;
+height:100%;
+}
+.transport-item .stroke{
+fill:none;
+stroke: rgba(255,255,255,.22);
+stroke-width:2.2;
+}
+.transport-item .fill{
+fill: rgba(255,255,255,.10);
+}
+.transport-item .glow{
+fill: rgba(120,215,255,.14);
+}
 
-      --max: 1160px;
-    }
-    *{box-sizing:border-box;margin:0;padding:0}
-    html,body{height:100%}
-    body{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
-      color:var(--white);
-      background:
-        radial-gradient(1200px 700px at 70% -10%, rgba(120,215,255,.18), transparent 60%),
-        radial-gradient(900px 600px at 20% 10%, rgba(180,235,255,.10), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg2));
-      overflow-x:hidden;
-    }
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max);margin:0 auto;padding:0 18px}
-    .topbar{
-      position:sticky;top:0;z-index:50;
-      backdrop-filter: blur(14px);
-      background: rgba(5,11,18,.62);
-      border-bottom:1px solid var(--line2);
-    }
-    .topbar-inner{
-      display:flex;align-items:center;justify-content:space-between;
-      padding:14px 0;
-      gap:14px;
-    }
-    .brand{
-      display:flex;align-items:center;gap:12px;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      font-weight:700;
-      font-size:13px;
-      color:rgba(255,255,255,.9);
-    }
-    .brand-dot{
-      width:10px;height:10px;border-radius:999px;
-      background: radial-gradient(circle at 30% 30%, var(--accent), rgba(255,255,255,.2));
-      box-shadow: 0 0 0 6px rgba(120,215,255,.10), 0 0 35px rgba(120,215,255,.22);
-    }
-    .nav{
-      display:flex;align-items:center;gap:18px;
-      color:rgba(255,255,255,.75);
-      font-size:14px;
-    }
-    .nav a{padding:8px 10px;border-radius:999px}
-    .nav a:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.92)}
-    .right{
-      display:flex;align-items:center;gap:10px;
-    }
-    .chip{
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.06);
-      border-radius:999px;
-      padding:10px 14px;
-      color:rgba(255,255,255,.86);
-      box-shadow: var(--shadow2);
-      display:flex;align-items:center;gap:10px;
-      font-size:13px;
-    }
-    .lang{
-      display:flex;align-items:center;gap:6px;
-      padding:4px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.05);
-    }
-    .lang button{
-      cursor:pointer;
-      border:0;
-      background:transparent;
-      color:rgba(255,255,255,.75);
-      padding:8px 12px;
-      border-radius:999px;
-      font-weight:700;
-      letter-spacing:.08em;
-      font-size:12px;
-    }
-    .lang button.active{
-      background: rgba(120,215,255,.18);
-      color:rgba(255,255,255,.95);
-      box-shadow: 0 0 0 1px rgba(120,215,255,.22) inset;
-    }
-    .cta{
-      border:1px solid rgba(120,215,255,.35);
-      background: linear-gradient(180deg, rgba(120,215,255,.22), rgba(255,255,255,.06));
-      padding:10px 16px;
-      border-radius:999px;
-      font-weight:700;
-      color:rgba(255,255,255,.95);
-      box-shadow: var(--shadow2);
-      white-space:nowrap;
-    }
-    .cta:hover{transform:translateY(-1px)}
-    .hero{
-      position:relative;
-      padding:56px 0 26px;
-    }
-    .hero-grid{
-      display:grid;
-      grid-template-columns: 1.2fr .8fr;
-      gap:18px;
-      align-items:stretch;
-    }
-    .panel{
-      border:1px solid var(--line2);
-      border-radius: var(--radius2);
-      background:
-        radial-gradient(800px 500px at 10% 0%, rgba(120,215,255,.14), transparent 55%),
-        linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
-    .hero-main{
-      padding:34px 30px 28px;
-      position:relative;
-      min-height: 420px;
-    }
-    .kicker{
-      display:inline-flex;gap:10px;align-items:center;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.05);
-      border-radius:999px;
-      padding:8px 12px;
-      color:rgba(255,255,255,.78);
-      font-size:12px;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-    }
-    .kicker i{
-      width:8px;height:8px;border-radius:999px;
-      background: rgba(120,215,255,.85);
-      box-shadow: 0 0 18px rgba(120,215,255,.4);
-      display:inline-block;
-    }
-    h1{
-      margin-top:18px;
-      font-size:56px;
-      line-height:1.03;
-      letter-spacing:-.02em;
-    }
-    .lead{
-      margin-top:16px;
-      color:var(--muted);
-      font-size:18px;
-      line-height:1.55;
-      max-width: 52ch;
-    }
-    .actions{
-      margin-top:22px;
-      display:flex;flex-wrap:wrap;gap:12px;
-      align-items:center;
-    }
-    .btn{
-      display:inline-flex;align-items:center;justify-content:center;
-      gap:10px;
-      padding:12px 16px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(255,255,255,.06);
-      color:rgba(255,255,255,.92);
-      font-weight:700;
-      cursor:pointer;
-      transition:.18s ease;
-    }
-    .btn:hover{transform:translateY(-1px);background: rgba(255,255,255,.08)}
-    .btn.primary{
-      border:1px solid rgba(120,215,255,.40);
-      background: linear-gradient(180deg, rgba(120,215,255,.25), rgba(255,255,255,.06));
-    }
-    .meta-row{
-      margin-top:26px;
-      display:flex;flex-wrap:wrap;gap:10px;
-    }
-    .pill{
-      border:1px solid var(--line2);
-      background: rgba(0,0,0,.22);
-      border-radius:999px;
-      padding:10px 12px;
-      color:rgba(255,255,255,.78);
-      font-size:13px;
-      display:flex;gap:10px;align-items:center;
-    }
-    .pill b{color:rgba(255,255,255,.92);font-weight:800}
-    .hero-side{
-      padding:0;
-      display:flex;
-      flex-direction:column;
-    }
-    .map{
-      height: 100%;
-      min-height: 420px;
-      background:
-        radial-gradient(600px 400px at 70% 20%, rgba(120,215,255,.12), transparent 55%),
-        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.55)),
-        url("https://images.unsplash.com/photo-1526779259212-939e64788e3c?auto=format&fit=crop&w=1600&q=70");
-      background-size: cover;
-      background-position: center;
-      position:relative;
-    }
-    .map::after{
-      content:"";
-      position:absolute;inset:0;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.66));
-    }
-    .map-card{
-      position:absolute;
-      left:18px;right:18px;bottom:18px;
-      z-index:2;
-      border:1px solid var(--line2);
-      border-radius: var(--radius);
-      background: rgba(5,11,18,.60);
-      backdrop-filter: blur(10px);
-      padding:14px 14px;
-      box-shadow: var(--shadow2);
-    }
-    .map-card .row{
-      display:flex;justify-content:space-between;gap:12px;align-items:center;
-      flex-wrap:wrap;
-    }
-    .map-card .title{
-      font-weight:800;letter-spacing:.04em;
-      color:rgba(255,255,255,.92);
-    }
-    .map-card .sub{color:rgba(255,255,255,.70);font-size:13px;margin-top:6px;line-height:1.45}
-    .sections{padding:26px 0 60px}
-    .grid3{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:14px;
-      margin-top:16px;
-    }
-    .card{
-      border:1px solid var(--line2);
-      background: rgba(255,255,255,.05);
-      border-radius: var(--radius2);
-      padding:18px 18px;
-      box-shadow: var(--shadow2);
-      min-height: 150px;
-    }
-    .card h3{
-      font-size:16px;
-      letter-spacing:.02em;
-      margin-bottom:10px;
-    }
-    .card p{color:var(--muted);font-size:14px;line-height:1.55}
-    .section-head{
-      margin-top:22px;
-      display:flex;justify-content:space-between;align-items:end;gap:12px;
-      flex-wrap:wrap;
-    }
-    .section-head h2{
-      font-size:28px;
-      letter-spacing:-.01em;
-    }
-    .section-head .note{
-      color:rgba(255,255,255,.64);
-      font-size:13px;
-    }
-    .two{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:14px;
-    }
-    .list{
-      margin-top:10px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .li{
-      border:1px solid var(--line2);
-      background: rgba(0,0,0,.22);
-      padding:12px 12px;
-      border-radius: 14px;
-      color:rgba(255,255,255,.80);
-      font-size:14px;
-      display:flex;gap:10px;
-      align-items:flex-start;
-    }
-    .li span{
-      width:9px;height:9px;border-radius:999px;
-      background: rgba(120,215,255,.85);
-      margin-top:6px;
-      flex:0 0 auto;
-      box-shadow: 0 0 18px rgba(120,215,255,.35);
-    }
-    .form{
-      margin-top:10px;
-      display:grid;
-      gap:10px;
-    }
-    .inp{
-      width:100%;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid var(--line2);
-      background: rgba(255,255,255,.05);
-      color:rgba(255,255,255,.92);
-      outline:none;
-    }
-    .inp::placeholder{color:rgba(255,255,255,.42)}
-    .footer{
-      border-top:1px solid var(--line2);
-      padding:18px 0 28px;
-      color:rgba(255,255,255,.62);
-      font-size:13px;
-    }
-    .footer .row{
-      display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;
-      align-items:center;
-    }
-    .mini-links a{padding:8px 10px;border-radius:999px}
-    .mini-links a:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+/* animation: slide + fade */
+@keyframes glide {
+0%   { opacity:0; transform:translateX(-10%) translateY(0px) scale(.98); }
+10%  { opacity:.75; }
+50%  { opacity:.65; }
+85%  { opacity:.10; }
+100% { opacity:0; transform:translateX(140%) translateY(2px) scale(1.02); }
+}
 
-    @media (max-width: 980px){
-      .hero-grid{grid-template-columns:1fr}
-      .map{min-height: 320px}
-      h1{font-size:44px}
-    }
-    @media (max-width: 720px){
-      .nav{display:none}
-      .grid3{grid-template-columns:1fr}
-      .two{grid-template-columns:1fr}
-      .hero-main{padding:26px 18px 22px}
-      h1{font-size:40px}
-    }
-  </style>
+/* 3 items rotate in sequence */
+.ship  { animation:glide 18s linear infinite; }
+.plane { animation:glide 18s linear infinite; animation-delay:6s; }
+.truck { animation:glide 18s linear infinite; animation-delay:12s; }
+
+/* Keep it subtle on small screens */
+@media(max-width:900px){
+.transport-lane{ top:120px; height:220px; opacity:.45; }
+.transport-item{ width:220px; height:110px; }
+}
+
+h1{
+font-size:64px;
+letter-spacing:-.02em;
+}
+.lead{
+margin-top:20px;
+font-size:20px;
+color:var(--muted);
+max-width:760px;
+margin-left:auto;
+margin-right:auto;
+line-height:1.6;
+}
+
+.buttons{
+margin-top:30px;
+display:flex;
+gap:14px;
+justify-content:center;
+flex-wrap:wrap;
+}
+.btn{
+padding:14px 22px;
+border-radius:999px;
+border:1px solid var(--line);
+background:rgba(255,255,255,.05);
+font-weight:700;
+}
+.btn.primary{
+border:1px solid rgba(120,215,255,.4);
+background:linear-gradient(180deg,rgba(120,215,255,.25),rgba(255,255,255,.05));
+}
+
+.map{
+margin-top:60px;
+border-radius:var(--radius);
+overflow:hidden;
+box-shadow:var(--shadow);
+background:
+linear-gradient(180deg,rgba(0,0,0,.3),rgba(0,0,0,.7)),
+url("https://images.unsplash.com/photo-1526779259212-939e64788e3c?auto=format&fit=crop&w=1600&q=80");
+background-size:cover;
+background-position:center;
+height:420px;
+display:flex;
+align-items:end;
+}
+.map-card{
+background:rgba(5,11,18,.7);
+backdrop-filter:blur(8px);
+padding:20px;
+width:100%;
+}
+.map-card h3{font-size:18px;margin-bottom:6px}
+.map-card p{color:var(--muted);font-size:14px}
+
+.section{
+margin-top:80px;
+}
+.section h2{
+font-size:32px;
+margin-bottom:20px;
+}
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+}
+.card{
+background:rgba(255,255,255,.05);
+border:1px solid var(--line);
+border-radius:var(--radius);
+padding:22px;
+}
+.card h3{margin-bottom:10px}
+.card p{color:var(--muted);font-size:14px;line-height:1.6}
+
+.footer{
+margin-top:80px;
+padding:30px 0;
+border-top:1px solid var(--line);
+text-align:center;
+color:var(--muted);
+font-size:14px;
+}
+
+@media(max-width:900px){
+.grid{grid-template-columns:1fr}
+h1{font-size:44px}
+}
+</style>
 </head>
 
 <body>
-  <!-- Topbar -->
-  <div class="topbar">
-    <div class="wrap">
-      <div class="topbar-inner">
-        <a class="brand" href="#top">
-          <span class="brand-dot"></span>
-          <span data-i18n="brand">АТЛАСФЛОУ</span>
-        </a>
 
-        <div class="nav">
-          <a href="#services" data-i18n="nav_services">Услуги</a>
-          <a href="#network" data-i18n="nav_network">Сеть</a>
-          <a href="#contact" data-i18n="nav_contact">Контакт</a>
-        </div>
+<div class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand">AtlasFlow</div>
+    <div class="nav">
+      <a href="#services">Services</a>
+      <a href="#network">Network</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a class="cta" href="#contact">Request a quote</a>
+  </div>
+</div>
 
-        <div class="right">
-          <div class="lang" aria-label="Language switcher">
-            <button id="btnRU" class="active" type="button">RU</button>
-            <button id="btnEN" type="button">EN</button>
-          </div>
-          <a class="cta" href="#contact" data-i18n="nav_cta">Запросить ценовое предложение</a>
-        </div>
+<div class="hero wrap">
+  <!-- animated background -->
+  <div class="transport-bg" aria-hidden="true">
+    <div class="transport-lane">
+      <!-- Ship -->
+      <div class="transport-item ship">
+        <svg viewBox="0 0 520 260" role="img" aria-label="">
+          <!-- glow line -->
+          <path class="glow" d="M40 190 C160 170, 320 170, 480 190" />
+          <!-- ship body -->
+          <path class="fill" d="M90 170 L390 170 L430 190 L70 190 Z"/>
+          <path class="stroke" d="M70 190 L430 190 L390 170 L90 170 Z"/>
+          <!-- containers -->
+          <rect class="fill" x="120" y="135" width="52" height="30" rx="6"/>
+          <rect class="fill" x="180" y="135" width="52" height="30" rx="6"/>
+          <rect class="fill" x="240" y="135" width="52" height="30" rx="6"/>
+          <rect class="fill" x="300" y="135" width="52" height="30" rx="6"/>
+          <rect class="stroke" x="120" y="135" width="52" height="30" rx="6"/>
+          <rect class="stroke" x="180" y="135" width="52" height="30" rx="6"/>
+          <rect class="stroke" x="240" y="135" width="52" height="30" rx="6"/>
+          <rect class="stroke" x="300" y="135" width="52" height="30" rx="6"/>
+          <!-- bridge -->
+          <path class="fill" d="M100 170 L140 170 L140 150 L112 150 Z"/>
+          <path class="stroke" d="M100 170 L140 170 L140 150 L112 150 Z"/>
+        </svg>
+      </div>
+
+      <!-- Plane -->
+      <div class="transport-item plane">
+        <svg viewBox="0 0 520 260" role="img" aria-label="">
+          <!-- contrail -->
+          <path class="stroke" d="M40 130 C160 110, 300 110, 480 130" />
+          <!-- plane silhouette -->
+          <path class="fill" d="M150 135 L350 125 L362 120 L370 126 L355 132 L355 138 L370 144 L362 150 L350 145 L150 135 Z"/>
+          <path class="stroke" d="M150 135 L350 125 L362 120 L370 126 L355 132 L355 138 L370 144 L362 150 L350 145 L150 135 Z"/>
+          <!-- wing -->
+          <path class="fill" d="M230 136 L300 92 L312 96 L268 140 Z"/>
+          <path class="stroke" d="M230 136 L300 92 L312 96 L268 140 Z"/>
+          <!-- tail -->
+          <path class="fill" d="M320 129 L350 108 L360 112 L340 132 Z"/>
+          <path class="stroke" d="M320 129 L350 108 L360 112 L340 132 Z"/>
+        </svg>
+      </div>
+
+      <!-- Truck with container -->
+      <div class="transport-item truck">
+        <svg viewBox="0 0 520 260" role="img" aria-label="">
+          <!-- road glow -->
+          <path class="glow" d="M50 195 C170 185, 330 185, 470 195" />
+          <!-- container -->
+          <rect class="fill" x="120" y="120" width="200" height="55" rx="10"/>
+          <rect class="stroke" x="120" y="120" width="200" height="55" rx="10"/>
+          <path class="stroke" d="M160 120 V175 M200 120 V175 M240 120 V175 M280 120 V175"/>
+          <!-- chassis -->
+          <path class="fill" d="M110 175 H360 L380 190 H90 Z"/>
+          <path class="stroke" d="M90 190 H380 L360 175 H110 Z"/>
+          <!-- cabin -->
+          <path class="fill" d="M330 175 H400 L420 190 H360 Z"/>
+          <path class="stroke" d="M330 175 H400 L420 190 H360 Z"/>
+          <rect class="fill" x="372" y="160" width="22" height="14" rx="3"/>
+          <rect class="stroke" x="372" y="160" width="22" height="14" rx="3"/>
+          <!-- wheels -->
+          <circle class="fill" cx="150" cy="190" r="16"/>
+          <circle class="fill" cx="300" cy="190" r="16"/>
+          <circle class="fill" cx="390" cy="190" r="16"/>
+          <circle class="stroke" cx="150" cy="190" r="16"/>
+          <circle class="stroke" cx="300" cy="190" r="16"/>
+          <circle class="stroke" cx="390" cy="190" r="16"/>
+        </svg>
       </div>
     </div>
   </div>
 
-  <!-- Hero -->
-  <div id="top" class="hero">
-    <div class="wrap">
-      <div class="hero-grid">
-        <div class="panel hero-main">
-          <div class="kicker"><i></i><span data-i18n="kicker">Global Logistics • High-Trust Operations</span></div>
-
-          <h1 data-i18n="h1">AtlasFlow</h1>
-
-          <p class="lead" data-i18n="lead">
-            Премиальные комплексные решения для грузоперевозок по ЕС, Китаю и Таиланду.
-            Для корпоративных клиентов, которым важны надежность, прозрачность и контроль.
-          </p>
-
-          <div class="actions">
-            <a class="btn primary" href="#contact" data-i18n="btn_vip">Запросите VIP-предложение</a>
-            <a class="btn" href="#services" data-i18n="btn_services">Изучите услуги</a>
-          </div>
-
-          <div class="meta-row">
-            <div class="pill"><b data-i18n="pill1_b">EU</b> <span data-i18n="pill1">door-to-door</span></div>
-            <div class="pill"><b data-i18n="pill2_b">China</b> <span data-i18n="pill2">export / consolidation</span></div>
-            <div class="pill"><b data-i18n="pill3_b">Thailand</b> <span data-i18n="pill3">last-mile & compliance</span></div>
-          </div>
-        </div>
-
-        <div class="panel hero-side">
-          <div class="map" role="img" aria-label="World logistics map">
-            <div class="map-card">
-              <div class="row">
-                <div>
-                  <div class="title" data-i18n="map_title">Глобальная сеть маршрутов</div>
-                  <div class="sub" data-i18n="map_sub">
-                    Координация поставок, контроль статуса и поддержка на каждом этапе.
-                  </div>
-                </div>
-                <a class="btn" href="#network" data-i18n="map_btn">Смотреть сеть</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Services -->
-      <div id="services" class="sections">
-        <div class="section-head">
-          <h2 data-i18n="s1_h2">Услуги корпоративного уровня</h2>
-          <div class="note" data-i18n="s1_note">Сфокусировано на надежности, сроках и комплаенсе.</div>
-        </div>
-
-        <div class="grid3">
-          <div class="card">
-            <h3 data-i18n="c1_t">EU ⇄ Asia Freight</h3>
-            <p data-i18n="c1_p">Мультимодальные перевозки, контроль цепочки поставок, прогнозируемые сроки и SLA.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="c2_t">Consolidation & Export</h3>
-            <p data-i18n="c2_p">Консолидация, упаковка, маркировка, документы, контроль партий и отправок.</p>
-          </div>
-          <div class="card">
-            <h3 data-i18n="c3_t">Customs & Compliance</h3>
-            <p data-i18n="c3_p">Сопровождение по документам, риски, проверки, минимизация задержек и прозрачность.</p>
-          </div>
-        </div>
-
-        <!-- Network + Contact -->
-        <div class="two">
-          <div id="network" class="card">
-            <h3 data-i18n="net_h3">Сеть / маршруты</h3>
-            <p data-i18n="net_p">Ключевые направления и операционные опции для бизнеса.</p>
-            <div class="list">
-              <div class="li"><span></span><div data-i18n="net_li1">Европа → Таиланд: контроль срока, документальный пакет, последний километр</div></div>
-              <div class="li"><span></span><div data-i18n="net_li2">Китай → ЕС: консолидация, экспорт, отслеживание статуса</div></div>
-              <div class="li"><span></span><div data-i18n="net_li3">EU/China → Thailand: комплаенс, таможенное сопровождение, поддержка</div></div>
-            </div>
-          </div>
-
-          <div id="contact" class="card">
-            <h3 data-i18n="con_h3">Запросить VIP-предложение</h3>
-            <p data-i18n="con_p">Оставьте контакты — мы ответим с расчетом и предложением.</p>
-            <form class="form" onsubmit="event.preventDefault(); alert(window.__i18nLang==='ru' ? 'Заявка отправлена (демо). Подключим форму позже.' : 'Request sent (demo). We will connect the form later.');">
-              <input class="inp" type="text" placeholder="Компания / Company" data-i18n-placeholder="ph_company" required />
-              <input class="inp" type="text" placeholder="Имя / Name" data-i18n-placeholder="ph_name" required />
-              <input class="inp" type="email" placeholder="Email" data-i18n-placeholder="ph_email" required />
-              <input class="inp" type="text" placeholder="Маршрут (EU↔TH / CN↔EU …)" data-i18n-placeholder="ph_route" />
-              <button class="btn primary" type="submit" data-i18n="con_btn">Отправить запрос</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <div class="footer">
-        <div class="wrap">
-          <div class="row">
-            <div>© <span id="yr"></span> AtlasFlow</div>
-            <div class="mini-links">
-              <a href="#services" data-i18n="f_services">Услуги</a>
-              <a href="#network" data-i18n="f_network">Сеть</a>
-              <a href="#contact" data-i18n="f_contact">Контакт</a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
+  <h1>AtlasFlow</h1>
+  <p class="lead">
+    Premium end-to-end logistics solutions across the EU, China and Thailand.
+    Built for corporate clients who require reliability, transparency and full control.
+  </p>
+  <div class="buttons">
+    <a class="btn primary" href="#contact">Request VIP proposal</a>
+    <a class="btn" href="#services">Explore services</a>
   </div>
 
-  <script>
-    // =============================
-    // AtlasFlow V2 i18n (RU/EN)
-    // =============================
-    const dict = {
-      ru: {
-        brand: "АТЛАСФЛОУ",
-        nav_services: "Услуги",
-        nav_network: "Сеть",
-        nav_contact: "Контакт",
-        nav_cta: "Запросить ценовое предложение",
-        kicker: "Глобальная логистика • Операции с высоким уровнем доверия",
-        h1: "AtlasFlow",
-        lead: "Премиальные комплексные решения для грузоперевозок по ЕС, Китаю и Таиланду. Для корпоративных клиентов, которым важны надежность, прозрачность и контроль.",
-        btn_vip: "Запросите VIP-предложение",
-        btn_services: "Изучите услуги",
-        pill1_b: "EU",
-        pill1: "door-to-door",
-        pill2_b: "China",
-        pill2: "export / consolidation",
-        pill3_b: "Thailand",
-        pill3: "last-mile & compliance",
-        map_title: "Глобальная сеть маршрутов",
-        map_sub: "Координация поставок, контроль статуса и поддержка на каждом этапе.",
-        map_btn: "Смотреть сеть",
-        s1_h2: "Услуги корпоративного уровня",
-        s1_note: "Сфокусировано на надежности, сроках и комплаенсе.",
-        c1_t: "EU ⇄ Asia Freight",
-        c1_p: "Мультимодальные перевозки, контроль цепочки поставок, прогнозируемые сроки и SLA.",
-        c2_t: "Consolidation & Export",
-        c2_p: "Консолидация, упаковка, маркировка, документы, контроль партий и отправок.",
-        c3_t: "Customs & Compliance",
-        c3_p: "Сопровождение по документам, риски, проверки, минимизация задержек и прозрачность.",
-        net_h3: "Сеть / маршруты",
-        net_p: "Ключевые направления и операционные опции для бизнеса.",
-        net_li1: "Европа → Таиланд: контроль срока, документальный пакет, последний километр",
-        net_li2: "Китай → ЕС: консолидация, экспорт, отслеживание статуса",
-        net_li3: "EU/China → Thailand: комплаенс, таможенное сопровождение, поддержка",
-        con_h3: "Запросить VIP-предложение",
-        con_p: "Оставьте контакты — мы ответим с расчетом и предложением.",
-        con_btn: "Отправить запрос",
-        ph_company: "Компания",
-        ph_name: "Имя",
-        ph_email: "Email",
-        ph_route: "Маршрут (EU↔TH / CN↔EU …)",
-        f_services: "Услуги",
-        f_network: "Сеть",
-        f_contact: "Контакт"
-      },
-      en: {
-        brand: "ATLASFLOW",
-        nav_services: "Services",
-        nav_network: "Network",
-        nav_contact: "Contact",
-        nav_cta: "Request a quote",
-        kicker: "Global logistics • High-trust operations",
-        h1: "AtlasFlow",
-        lead: "Premium end-to-end logistics solutions across the EU, China, and Thailand. Built for corporate clients who demand reliability, transparency, and control.",
-        btn_vip: "Request a VIP proposal",
-        btn_services: "Explore services",
-        pill1_b: "EU",
-        pill1: "door-to-door",
-        pill2_b: "China",
-        pill2: "export / consolidation",
-        pill3_b: "Thailand",
-        pill3: "last-mile & compliance",
-        map_title: "Global route network",
-        map_sub: "Coordination, status control, and support at every step.",
-        map_btn: "View network",
-        s1_h2: "Enterprise-grade services",
-        s1_note: "Focused on reliability, lead times, and compliance.",
-        c1_t: "EU ⇄ Asia Freight",
-        c1_p: "Multimodal transport, supply-chain control, predictable lead times, and SLA.",
-        c2_t: "Consolidation & Export",
-        c2_p: "Consolidation, packaging, labeling, documents, and shipment control.",
-        c3_t: "Customs & Compliance",
-        c3_p: "Documentation guidance, risk checks, fewer delays, and full transparency.",
-        net_h3: "Network / routes",
-        net_p: "Key lanes and operational options for business.",
-        net_li1: "Europe → Thailand: lead-time control, documents, last-mile delivery",
-        net_li2: "China → EU: consolidation, export, status tracking",
-        net_li3: "EU/China → Thailand: compliance, customs support, assistance",
-        con_h3: "Request a VIP proposal",
-        con_p: "Leave your details — we’ll reply with pricing and a tailored offer.",
-        con_btn: "Send request",
-        ph_company: "Company",
-        ph_name: "Name",
-        ph_email: "Email",
-        ph_route: "Route (EU↔TH / CN↔EU …)",
-        f_services: "Services",
-        f_network: "Network",
-        f_contact: "Contact"
-      }
-    };
+  <div class="map" id="network">
+    <div class="map-card">
+      <h3>Global Route Network</h3>
+      <p>Coordinated operations, shipment control and support at every stage.</p>
+    </div>
+  </div>
+</div>
 
-    function applyLang(lang){
-      window.__i18nLang = lang;
-      document.documentElement.lang = lang;
+<div id="services" class="section wrap">
+  <h2>Enterprise-grade Services</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>EU ⇄ Asia Freight</h3>
+      <p>Multimodal transport, supply-chain control and predictable lead times.</p>
+    </div>
+    <div class="card">
+      <h3>Consolidation & Export</h3>
+      <p>Consolidation, packaging, labeling and shipment management.</p>
+    </div>
+    <div class="card">
+      <h3>Customs & Compliance</h3>
+      <p>Documentation, risk checks and minimal delays with full transparency.</p>
+    </div>
+  </div>
+</div>
 
-      // text nodes
-      document.querySelectorAll("[data-i18n]").forEach(el=>{
-        const key = el.getAttribute("data-i18n");
-        if(dict[lang][key] !== undefined) el.textContent = dict[lang][key];
-      });
+<div id="contact" class="footer wrap">
+  © 2026 AtlasFlow — Global Logistics Operations
+</div>
 
-      // placeholders
-      document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{
-        const key = el.getAttribute("data-i18n-placeholder");
-        if(dict[lang][key] !== undefined) el.setAttribute("placeholder", dict[lang][key]);
-      });
-
-      // buttons
-      document.getElementById("btnRU").classList.toggle("active", lang==="ru");
-      document.getElementById("btnEN").classList.toggle("active", lang==="en");
-
-      localStorage.setItem("atlasflow_lang", lang);
-    }
-
-    function detectDefaultLang(){
-      const saved = localStorage.getItem("atlasflow_lang");
-      if(saved === "ru" || saved === "en") return saved;
-      const nav = (navigator.language || "ru").toLowerCase();
-      return nav.startsWith("en") ? "en" : "ru";
-    }
-
-    // init
-    document.getElementById("yr").textContent = new Date().getFullYear();
-    const initial = detectDefaultLang();
-    applyLang(initial);
-
-    document.getElementById("btnRU").addEventListener("click", ()=>applyLang("ru"));
-    document.getElementById("btnEN").addEventListener("click", ()=>applyLang("en"));
-  </script>
 </body>
 </html>
