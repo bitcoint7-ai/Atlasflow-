@@ -1,842 +1,1214 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AtlasFlow — VIP Global Logistics</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AtlasFlow — Global Logistics</title>
 
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<style>
+/* =========================
+   Luxury Design System
+========================= */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg0:#050b12;
+  --bg1:#07131c;
+  --bg2:#03070c;
 
-  <style>
-    /* ==========================================
-       VIP / Luxury Design System (single-file)
-       ========================================== */
-    *{margin:0;padding:0;box-sizing:border-box}
-    :root{
-      --bg0:#050b12;
-      --bg1:#07131c;
-      --bg2:#03070c;
+  --white:#ffffff;
+  --muted:rgba(255,255,255,.78);
+  --muted2:rgba(255,255,255,.64);
 
-      --white:#ffffff;
-      --muted:rgba(255,255,255,.78);
-      --muted2:rgba(255,255,255,.64);
+  --glass:rgba(255,255,255,.06);
+  --glass2:rgba(255,255,255,.09);
+  --line:rgba(255,255,255,.10);
+  --line2:rgba(255,255,255,.06);
 
-      --glass:rgba(255,255,255,.06);
-      --glass2:rgba(255,255,255,.09);
+  --accent:rgba(255,255,255,.92);
+  --accentSoft:rgba(200,235,255,.55);
+  --aqua:rgba(130,210,255,.40);
 
-      --line:rgba(255,255,255,.10);
-      --line2:rgba(255,255,255,.06);
+  --shadow: 0 24px 90px rgba(0,0,0,.45);
+  --shadow2: 0 14px 50px rgba(0,0,0,.35);
 
-      --accent:rgba(255,255,255,.92);
-      --accentSoft:rgba(200,235,255,.55);
-      --aqua:rgba(130,210,255,.40);
+  --r:24px;
+  --r2:18px;
+  --max:1200px;
 
-      --shadow:0 24px 90px rgba(0,0,0,.45);
-      --shadow2:0 14px 50px rgba(0,0,0,.35);
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  color:var(--white);
+  overflow-x:hidden;
 
-      --r:24px;
-      --r2:18px;
-      --max:1200px;
+  background:
+    radial-gradient(1200px 700px at 18% 18%, rgba(160,220,255,.10), transparent 60%),
+    radial-gradient(900px 600px at 85% 75%, rgba(120,200,255,.07), transparent 62%),
+    radial-gradient(700px 500px at 50% 110%, rgba(255,255,255,.04), transparent 65%),
+    linear-gradient(135deg, var(--bg0), var(--bg1), var(--bg2));
+}
 
-      --navH:72px;
-    }
+/* Subtle grain for luxury feel */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  pointer-events:none;
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.025) 1px, transparent 0);
+  background-size: 22px 22px;
+  opacity:.35;
+  z-index:0;
+}
 
-    body{
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      color:var(--white);
-      background:
-        radial-gradient(1200px 700px at 15% 15%, rgba(70,160,255,.12), transparent 60%),
-        radial-gradient(900px 600px at 85% 25%, rgba(0,255,255,.06), transparent 55%),
-        linear-gradient(180deg, var(--bg0), var(--bg2));
-      overflow-x:hidden;
-      min-height:100vh;
-    }
+/* =========================
+   Preloader (minimal)
+========================= */
+#preloader{
+  position:fixed; inset:0; z-index:9999;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(160,220,255,.10), transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,.06), transparent 60%),
+    #04080d;
+  transition:opacity .55s ease, visibility .55s ease;
+}
+#preloader.hide{opacity:0; visibility:hidden}
+.loaderWrap{display:flex; flex-direction:column; align-items:center; gap:16px}
+.loaderRing{
+  width:62px;height:62px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.14);
+  position:relative;
+  box-shadow: 0 0 24px rgba(160,220,255,.10);
+}
+.loaderRing:before{
+  content:"";
+  position:absolute; inset:8px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.08);
+}
+.loaderDot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.90);
+  position:absolute; top:2px; left:50%;
+  transform:translateX(-50%);
+  box-shadow:0 0 18px rgba(160,220,255,.18);
+  animation:spin 1.2s linear infinite;
+  transform-origin: 0 29px;
+}
+@keyframes spin{to{transform:translateX(-50%) rotate(360deg)}}
+.loaderText{
+  font-size:12px; letter-spacing:.26em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.74);
+}
 
-    a{color:inherit;text-decoration:none}
-    .wrap{max-width:var(--max); margin:0 auto; padding:0 22px;}
-    .muted{color:var(--muted)}
-    .muted2{color:var(--muted2)}
-    .smallcaps{
-      letter-spacing:.26em;
-      text-transform:uppercase;
-      font-size:12px;
-      color:rgba(255,255,255,.65);
-    }
+/* =========================
+   FX Layers (Map + Particles)
+========================= */
+.fx{ position:fixed; inset:0; pointer-events:none; z-index:1; }
+#mapLayer{ position:absolute; inset:0; opacity:.96; }
+#particles{ position:absolute; inset:0; opacity:.20; }
 
-    /* ==========================================
-       Top nav
-       ========================================== */
-    .nav{
-      position:fixed; top:0; left:0; right:0;
-      height:var(--navH);
-      display:flex;
-      align-items:center;
-      z-index:50;
-      backdrop-filter: blur(18px);
-      background:linear-gradient(180deg, rgba(4,10,16,.85), rgba(4,10,16,.45));
-      border-bottom:1px solid rgba(255,255,255,.06);
-    }
-    .nav .wrap{
-      width:100%;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:16px;
-    }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      font-weight:700;
-      letter-spacing:.12em;
-    }
-    .dot{
-      width:10px;height:10px;border-radius:50%;
-      background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,.35));
-      box-shadow:0 0 24px rgba(130,210,255,.35);
-    }
-    .navlinks{
-      display:flex; gap:18px;
-      align-items:center;
-      color:rgba(255,255,255,.80);
-      font-size:14px;
-    }
-    .navlinks a{
-      padding:10px 10px;
-      border-radius:12px;
-      transition:.2s;
-    }
-    .navlinks a:hover{
-      background:rgba(255,255,255,.06);
-      color:#fff;
-    }
+/* =========================
+   Layout
+========================= */
+.container{
+  width:100%;
+  max-width:var(--max);
+  margin:0 auto;
+  padding:0 18px;
+}
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding:12px 16px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.28);
-      color:#fff;
-      font-size:14px;
-      font-weight:600;
-      cursor:pointer;
-      transition:.25s;
-      box-shadow: 0 10px 26px rgba(0,0,0,.22);
-    }
-    .btn:hover{ transform: translateY(-1px); border-color:rgba(255,255,255,.18); }
-    .btn.primary{
-      background:linear-gradient(90deg, rgba(56,189,248,.96), rgba(14,165,233,.96));
-      color:#001018;
-      border:0;
-      box-shadow: 0 18px 40px rgba(14,165,233,.22);
-    }
-    .btn.primary:hover{ box-shadow: 0 22px 52px rgba(14,165,233,.30); }
-    .pill{
-      width:8px;height:8px;border-radius:999px;
-      background:rgba(255,255,255,.78);
-      box-shadow:0 0 18px rgba(130,210,255,.25);
-    }
+/* =========================
+   Nav
+========================= */
+.nav{
+  position:sticky; top:0;
+  z-index:30;
+  background: rgba(5,10,14,.42);
+  backdrop-filter: blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.navInner{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 0;
+}
+.brand{
+  display:flex; align-items:center; gap:12px;
+  font-weight:900;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-size:13px;
+}
+.brandMark{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.92);
+  box-shadow:0 0 18px rgba(160,220,255,.14);
+}
+.navLinks{
+  display:flex; align-items:center; gap:18px;
+}
+.navLinks a{
+  color:rgba(255,255,255,.82);
+  text-decoration:none;
+  font-size:13px;
+  letter-spacing:.02em;
+  transition:.25s;
+}
+.navLinks a:hover{color:rgba(255,255,255,.98)}
+.navCta{
+  padding:10px 16px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.18);
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10);
+}
+.navCta:hover{
+  border-color: rgba(255,255,255,.26);
+  background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+}
 
-    /* ==========================================
-       Hero
-       ========================================== */
-    .hero{
-      padding-top:calc(var(--navH) + 70px);
-      padding-bottom:38px;
-      position:relative;
-      overflow:hidden;
-    }
+/* =========================
+   Hero
+========================= */
+.hero{
+  position:relative;
+  z-index:10;
+  min-height:92vh;
+  display:flex;
+  align-items:center;
+  padding:76px 0 54px;
+  overflow:hidden;
+}
+.heroGlow{
+  position:absolute; inset:-25%;
+  background:
+    radial-gradient(circle at 28% 28%, rgba(255,255,255,.10), transparent 58%),
+    radial-gradient(circle at 78% 62%, rgba(160,220,255,.10), transparent 60%),
+    radial-gradient(circle at 50% 115%, rgba(255,255,255,.06), transparent 60%);
+  filter: blur(54px);
+  z-index:-1;
+}
+.heroGrid{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to right, rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 120px 120px;
+  opacity:.25;
+  mask-image: radial-gradient(circle at 45% 35%, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 55%, rgba(0,0,0,0) 85%);
+  z-index:-1;
+}
 
-    /* map background with subtle vignette */
-    .hero::before{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        radial-gradient(700px 300px at 50% 0%, rgba(0,0,0,.10), rgba(0,0,0,.65)),
-        radial-gradient(1200px 700px at 50% 30%, rgba(0,0,0,.10), rgba(0,0,0,.70)),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='900'%3E%3Crect width='1600' height='900' fill='%23040a12'/%3E%3Cpath d='M0,450 L1600,450' stroke='%231c2a3a' stroke-width='1' opacity='0.5'/%3E%3Cpath d='M800,0 L800,900' stroke='%231c2a3a' stroke-width='1' opacity='0.5'/%3E%3Cg opacity='0.18'%3E%3Cpath d='M220,240 C320,210 430,220 520,250 C610,280 680,320 700,360 C720,410 680,450 620,470 C540,495 420,490 350,450 C270,410 210,330 220,240 Z' fill='none' stroke='%23bfe8ff' stroke-width='2'/%3E%3Cpath d='M1000,280 C1120,240 1260,260 1360,340 C1460,420 1460,520 1360,560 C1240,610 1120,590 1030,520 C930,440 910,330 1000,280 Z' fill='none' stroke='%23bfe8ff' stroke-width='2'/%3E%3Cpath d='M730,560 C780,520 860,515 910,550 C960,590 950,650 900,680 C840,720 760,700 730,640 C710,600 710,580 730,560 Z' fill='none' stroke='%23bfe8ff' stroke-width='2'/%3E%3C/g%3E%3Cg opacity='0.22'%3E%3Cpath d='M420,220 L650,360 L880,250 L1170,320' stroke='%238bd3ff' stroke-width='2' fill='none'/%3E%3Ccircle cx='420' cy='220' r='4' fill='%23ffffff'/%3E%3Ccircle cx='650' cy='360' r='4' fill='%23ffffff'/%3E%3Ccircle cx='880' cy='250' r='4' fill='%23ffffff'/%3E%3Ccircle cx='1170' cy='320' r='4' fill='%23ffffff'/%3E%3C/g%3E%3C/svg%3E");
-      background-size:cover;
-      background-position:center;
-      filter:saturate(1.05) contrast(1.05);
-      z-index:-2;
-    }
-    .hero::after{
-      content:"";
-      position:absolute; inset:-2px;
-      background:
-        radial-gradient(800px 300px at 50% 30%, rgba(56,189,248,.12), transparent 60%),
-        radial-gradient(1000px 650px at 30% 70%, rgba(14,165,233,.08), transparent 55%),
-        radial-gradient(900px 620px at 80% 70%, rgba(130,210,255,.06), transparent 55%),
-        linear-gradient(180deg, rgba(0,0,0,.00), rgba(0,0,0,.55));
-      z-index:-1;
-    }
+.heroInner{
+  display:grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap:34px;
+  align-items:center;
+}
+@media (max-width:920px){
+  .heroInner{grid-template-columns:1fr; text-align:center}
+}
 
-    .heroTop{
-      text-align:center;
-      max-width:980px;
-      margin:0 auto;
-      padding:10px 0 20px;
-    }
-    h1{
-      font-size: clamp(44px, 6vw, 82px);
-      line-height: 1.05;
-      letter-spacing:-0.02em;
-      margin-top:10px;
-      margin-bottom:16px;
-      text-shadow:0 22px 70px rgba(0,0,0,.55);
-    }
-    .heroSub{
-      font-size: clamp(16px, 2vw, 20px);
-      line-height:1.6;
-      color:rgba(255,255,255,.84);
-      max-width:900px;
-      margin:0 auto 26px;
-    }
+/* “как было” — globe badge */
+.badge{
+  width:118px;height:118px;border-radius:30px;
+  display:grid; place-items:center;
+  background: rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);
+  box-shadow: var(--shadow);
+  position:relative;
+  overflow:hidden;
+  animation:float 4.2s ease-in-out infinite;
+}
+.badge::after{
+  content:"";
+  position:absolute; inset:-40%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.12), transparent 60%);
+  transform: rotate(18deg);
+  opacity:.75;
+}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+.globe{
+  width:66px;height:66px;border-radius:50%;
+  border:1.6px solid rgba(255,255,255,.26);
+  position:relative;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.11), rgba(255,255,255,0) 62%);
+  box-shadow:0 0 26px rgba(160,220,255,.14);
+}
+.globe::before{
+  content:""; position:absolute; inset:10px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:50%;
+}
+.globe::after{
+  content:""; position:absolute; left:10px; right:10px; top:50%;
+  height:1px; background:rgba(255,255,255,.18);
+}
+.globeLines{position:absolute; inset:0}
+.globeLines span{
+  position:absolute; top:8px; bottom:8px; width:1px;
+  background:rgba(255,255,255,.14);
+}
+.globeLines span:nth-child(1){left:22px}
+.globeLines span:nth-child(2){left:50%; transform:translateX(-50%); background:rgba(255,255,255,.24)}
+.globeLines span:nth-child(3){right:22px}
 
-    .ctaRow{
-      display:flex;
-      justify-content:center;
-      gap:14px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
+.kicker{
+  margin-top:20px;
+  font-size:12px;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.72);
+}
+.title{
+  margin-top:14px;
+  font-size:92px;
+  line-height: .95;
+  font-weight: 950;
+  letter-spacing: .01em;
+  color:#fff;
+  text-shadow:
+    0 18px 90px rgba(0,0,0,.55),
+    0 0 26px rgba(160,220,255,.10);
+}
+@media (max-width:520px){.title{font-size:60px}}
 
-    /* ==========================================
-       Background transport animation (subtle)
-       ========================================== */
-    .transportLayer{
-      position:absolute;
-      inset:0;
-      pointer-events:none;
-      z-index:-1;
-      opacity:.32;
-      mask-image: radial-gradient(800px 400px at 50% 30%, #000 20%, transparent 70%);
-    }
-    .transport{
-      position:absolute;
-      left:-35%;
-      top:18%;
-      width:min(900px, 90vw);
-      opacity:0;
-      filter: drop-shadow(0 20px 40px rgba(0,0,0,.35));
-      animation: transportCycle 18s linear infinite;
-    }
-    .transport.ship{ top:18%; animation-delay:0s; }
-    .transport.plane{ top:10%; animation-delay:6s; transform: rotate(-2deg); }
-    .transport.truck{ top:26%; animation-delay:12s; }
+.subtitle{
+  margin-top:16px;
+  max-width:760px;
+  font-size:18px;
+  line-height:1.7;
+  color:var(--muted);
+}
+@media (max-width:920px){.subtitle{margin-left:auto;margin-right:auto}}
 
-    @keyframes transportCycle{
-      0%   { transform:translateX(0) scale(1); opacity:0; }
-      8%   { opacity:.75; }
-      45%  { opacity:.75; }
-      55%  { opacity:0; }
-      100% { transform:translateX(190%) scale(1); opacity:0; }
-    }
+.heroBtns{
+  margin-top:28px;
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+@media (max-width:920px){.heroBtns{justify-content:center}}
 
-    .transport svg{
-      width:100%;
-      height:auto;
-    }
-    .t-stroke{ stroke: rgba(200,235,255,.55); }
-    .t-fill{ fill: rgba(255,255,255,.05); }
+.btn{
+  display:inline-flex; align-items:center; gap:10px;
+  padding:14px 22px;
+  border-radius:999px;
+  text-decoration:none;
+  color:rgba(255,255,255,.92);
+  font-size:14px;
+  letter-spacing:.02em;
+  border:1px solid rgba(255,255,255,.20);
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.03));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.12), var(--shadow2);
+  transition: transform .25s ease, border-color .25s ease, background .25s ease;
+}
+.btn:hover{
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.28);
+  background: linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.04));
+}
+.btn.primary{
+  border-color: rgba(255,255,255,.38);
+}
+.btn.ghost{
+  background: rgba(255,255,255,.02);
+  border-color: rgba(255,255,255,.14);
+}
+.iconDot{
+  width:8px;height:8px;border-radius:50%;
+  background: rgba(255,255,255,.92);
+  box-shadow:0 0 18px rgba(160,220,255,.14);
+}
 
-    /* ==========================================
-       Cards / sections
-       ========================================== */
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:var(--r);
-      box-shadow: var(--shadow);
-      overflow:hidden;
-    }
+/* Right panel (credibility) */
+.panel{
+  border-radius: var(--r);
+  background: rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+}
+.panel::before{
+  content:"";
+  position:absolute; inset:-40%;
+  background:
+    radial-gradient(circle at 35% 35%, rgba(255,255,255,.10), transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(160,220,255,.08), transparent 60%);
+  filter: blur(26px);
+  opacity:.9;
+}
+.panel > *{position:relative}
+.panelTitle{
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  font-size:12px;
+  color:rgba(255,255,255,.74);
+}
+.stats{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.stat{
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.09);
+  background: rgba(0,0,0,.14);
+  padding:14px;
+}
+.stat b{
+  display:block;
+  font-size:18px;
+  letter-spacing:.02em;
+}
+.stat span{
+  display:block;
+  margin-top:6px;
+  font-size:12.5px;
+  color:rgba(255,255,255,.70);
+  line-height:1.35;
+}
+.trustRow{
+  margin-top:14px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.trustPill{
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.03);
+  font-size:12.5px;
+  color:rgba(255,255,255,.78);
+}
 
-    .section{
-      padding:70px 0;
-    }
-    .sectionHead{
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      gap:16px;
-      margin-bottom:18px;
-    }
-    .sectionTitle{
-      font-size: clamp(28px, 3vw, 44px);
-      line-height:1.15;
-      letter-spacing:-.01em;
-    }
-    .sectionDesc{
-      color:rgba(255,255,255,.78);
-      max-width:720px;
-      line-height:1.6;
-      margin-top:10px;
-    }
+/* =========================
+   Sections
+========================= */
+.section{
+  position:relative;
+  z-index:10;
+  padding:92px 0;
+}
+.sectionHead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:22px;
+  flex-wrap:wrap;
+}
+.h2{
+  font-size:36px;
+  letter-spacing:.01em;
+  font-weight:900;
+  color:#fff;
+}
+.p{
+  max-width:640px;
+  color:var(--muted2);
+  line-height:1.7;
+}
+.hr{
+  margin-top:22px;
+  height:1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent);
+  opacity:.9;
+}
 
-    /* capabilities block like your screenshot */
-    .caps{
-      margin-top:28px;
-      padding:26px;
-    }
-    .capsTop{
-      text-align:center;
-      margin-bottom:18px;
-    }
-    .capsGrid{
-      display:grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap:16px;
-      margin-top:14px;
-    }
-    .capItem{
-      border-radius:18px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(0,0,0,.20);
-      padding:18px;
-      min-height:84px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      gap:6px;
-    }
-    .capItem strong{ font-size:20px; }
-    .capTags{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:14px;
-      justify-content:flex-start;
-    }
-    .tag{
-      font-size:12px;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.22);
-      color:rgba(255,255,255,.78);
-    }
+/* cards */
+.grid3{
+  margin-top:38px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:18px;
+}
+@media (max-width:980px){.grid3{grid-template-columns:1fr}}
+.card{
+  border-radius: var(--r);
+  background: rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(16px);
+  box-shadow: var(--shadow2);
+  padding:24px;
+  overflow:hidden;
+  transition: transform .25s ease, background .25s ease, border-color .25s ease;
+  position:relative;
+}
+.card::after{
+  content:"";
+  position:absolute; inset:-40%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), transparent 62%);
+  filter: blur(30px);
+  opacity:.55;
+}
+.card:hover{
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+}
+.card > *{position:relative}
+.cardTop{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px;
+}
+.cardTag{
+  font-size:12px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.70);
+}
+.cardTitle{
+  margin-top:12px;
+  font-size:18px;
+  font-weight:900;
+  color:rgba(255,255,255,.92);
+}
+.cardText{
+  margin-top:10px;
+  color:rgba(255,255,255,.74);
+  line-height:1.7;
+  font-size:14.5px;
+}
+.cardIcon{
+  width:38px;height:38px;border-radius:14px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.14);
+  display:grid; place-items:center;
+}
+.cardIcon i{
+  display:block;
+  width:14px;height:14px;border-radius:50%;
+  background: rgba(255,255,255,.85);
+  box-shadow:0 0 22px rgba(160,220,255,.14);
+}
 
-    /* Network / Services accordion */
-    .panel{
-      padding:18px;
-      border-radius:var(--r);
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(0,0,0,.18);
-      box-shadow: var(--shadow2);
-    }
-    .accordion{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      margin-top:18px;
-    }
-    details{
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.08);
-      background:rgba(0,0,0,.20);
-      overflow:hidden;
-    }
-    summary{
-      list-style:none;
-      cursor:pointer;
-      padding:18px 18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      user-select:none;
-    }
-    summary::-webkit-details-marker{ display:none; }
-    .sumLeft{
-      display:flex; flex-direction:column; gap:6px;
-    }
-    .sumKicker{
-      font-size:12px;
-      letter-spacing:.22em;
-      text-transform:uppercase;
-      color:rgba(255,255,255,.60);
-    }
-    .sumTitle{
-      font-size:18px;
-      font-weight:700;
-    }
-    .sumRight{
-      width:18px;height:18px;border-radius:50%;
-      border:1px solid rgba(255,255,255,.20);
-      background:rgba(255,255,255,.06);
-    }
-    details[open] .sumRight{
-      background:rgba(56,189,248,.25);
-      border-color:rgba(56,189,248,.35);
-    }
-    .detailBody{
-      padding:0 18px 18px 18px;
-      color:rgba(255,255,255,.78);
-      line-height:1.65;
-    }
+/* =========================
+   Contact (Form + chips)
+========================= */
+.contactBox{
+  margin-top:36px;
+  border-radius: var(--r);
+  background: rgba(255,255,255,.045);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+  padding:26px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.contactBox .left{
+  display:flex; flex-direction:column; gap:6px;
+}
+.contactBox .left b{
+  font-size:18px;
+  letter-spacing:.01em;
+}
+.contactBox .left span{
+  color:rgba(255,255,255,.72);
+  line-height:1.55;
+}
+.chips{
+  display:flex; gap:10px; flex-wrap:wrap;
+}
+.chip{
+  text-decoration:none;
+  color:rgba(255,255,255,.88);
+  padding:11px 14px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(0,0,0,.12);
+  transition:.25s;
+}
+.chip:hover{
+  border-color: rgba(255,255,255,.22);
+  background: rgba(255,255,255,.04);
+}
 
-    /* ==========================================
-       Quote Form (Formspree) — integrated
-       ========================================== */
-    .quote-section{
-      margin:90px auto 40px;
-      max-width:900px;
-      padding:0 24px;
-      scroll-margin-top: 90px;
-    }
+/* Form block */
+.formWrap{
+  margin-top:18px;
+  border-radius: var(--r);
+  background: rgba(255,255,255,.040);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow2);
+  padding:22px;
+  overflow:hidden;
+  position:relative;
+}
+.formWrap::after{
+  content:"";
+  position:absolute; inset:-40%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.10), transparent 62%);
+  filter: blur(30px);
+  opacity:.45;
+}
+.formWrap > *{position:relative}
 
-    .quote-form{
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      background:var(--glass2);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      padding:46px;
-      backdrop-filter: blur(18px);
-      box-shadow: var(--shadow2);
-    }
+.formTitle{
+  font-size:34px;
+  font-weight:950;
+  letter-spacing:.01em;
+  margin-bottom:8px;
+}
+.formSub{
+  color:rgba(255,255,255,.70);
+  line-height:1.6;
+  margin-bottom:16px;
+}
+.formGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+@media (max-width:820px){.formGrid{grid-template-columns:1fr}}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.field label{
+  font-size:12px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,.70);
+}
+.input, .textarea, .select{
+  width:100%;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.14);
+  color: rgba(255,255,255,.92);
+  padding:14px 14px;
+  outline:none;
+  transition:.2s;
+}
+.input::placeholder, .textarea::placeholder{color:rgba(255,255,255,.45)}
+.input:focus, .textarea:focus, .select:focus{
+  border-color: rgba(255,255,255,.22);
+  background: rgba(0,0,0,.18);
+}
+.textarea{
+  min-height:140px;
+  resize:vertical;
+  grid-column:1 / -1;
+}
+.formActions{
+  margin-top:14px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.submitBtn{
+  cursor:pointer;
+  border:none;
+  padding:14px 22px;
+  border-radius:999px;
+  color:rgba(255,255,255,.94);
+  font-size:14px;
+  letter-spacing:.02em;
+  border:1px solid rgba(255,255,255,.30);
+  background: linear-gradient(180deg, rgba(20,120,255,.22), rgba(255,255,255,.03));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.14), var(--shadow2);
+  transition:.25s;
+}
+.submitBtn:hover{
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.38);
+  background: linear-gradient(180deg, rgba(20,120,255,.28), rgba(255,255,255,.04));
+}
+.formNote{
+  color:rgba(255,255,255,.62);
+  font-size:13px;
+  line-height:1.5;
+}
+#formStatus{
+  margin-top:12px;
+  color:rgba(255,255,255,.78);
+  font-size:13px;
+  line-height:1.5;
+}
+#formStatus.ok{color:rgba(190,255,220,.84)}
+#formStatus.err{color:rgba(255,190,190,.84)}
 
-    .quote-form h2{
-      color:var(--white);
-      text-align:center;
-      font-size:32px;
-      margin-bottom:6px;
-      letter-spacing:-.01em;
-    }
-    .quote-form p{
-      text-align:center;
-      color:rgba(255,255,255,.75);
-      margin-bottom:8px;
-      line-height:1.55;
-    }
+/* =========================
+   Footer
+========================= */
+.footer{
+  position:relative;
+  z-index:10;
+  padding:34px 0 46px;
+  border-top:1px solid rgba(255,255,255,.07);
+  color:rgba(255,255,255,.62);
+  text-align:center;
+  letter-spacing:.02em;
+}
 
-    .quote-form .row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
+/* =========================
+   Map Styling (Realistic)
+========================= */
+#mapSvg .fog{
+  animation: fog 18s ease-in-out infinite alternate;
+  transform-origin: 50% 50%;
+}
+@keyframes fog{
+  0%{transform:translate(-.6%, -.4%) scale(1.03); opacity:.38}
+  100%{transform:translate(.8%, .6%) scale(1.06); opacity:.58}
+}
+#mapSvg .graticule{fill:none; stroke: rgba(255,255,255,.020); stroke-width: 1}
+#mapSvg .land{
+  fill: rgba(255,255,255,.038);
+  stroke: rgba(255,255,255,.085);
+  stroke-width: .9;
+  opacity:.95;
+}
+#mapSvg .coast{fill:none; stroke: rgba(255,255,255,.12); stroke-width: .9; opacity:.42}
+#mapSvg .borders{fill:none; stroke: rgba(255,255,255,.045); stroke-width: .8; opacity:.40}
 
-    .quote-form input,
-    .quote-form textarea{
-      background:rgba(0,0,0,0.45);
-      border:1px solid var(--line2);
-      border-radius:12px;
-      padding:14px 14px;
-      color:white;
-      font-size:15px;
-      outline:none;
-      transition:.2s;
-    }
-    .quote-form input:focus,
-    .quote-form textarea:focus{
-      border-color: rgba(56,189,248,.45);
-      box-shadow: 0 0 0 4px rgba(56,189,248,.10);
-    }
+/* solid routes (no dotted) */
+#mapSvg .route{
+  fill:none;
+  stroke-linecap:round;
+  opacity:.92;
+  filter: drop-shadow(0 0 10px rgba(160,220,255,.07));
+}
+#mapSvg .route.sea{stroke: rgba(160,220,255,.30); stroke-width:1.55}
+#mapSvg .route.air{stroke: rgba(255,255,255,.28); stroke-width:1.55}
+#mapSvg .route.land{stroke: rgba(190,255,220,.24); stroke-width:1.45}
 
-    .quote-form textarea{
-      min-height:140px;
-      resize:none;
-    }
+#mapSvg .hub{fill: rgba(255,255,255,.82)}
+#mapSvg .pulse{
+  fill:none; stroke: rgba(255,255,255,.72);
+  stroke-width:1.5; opacity:.28;
+  transform-origin:center; animation:pulse 2.8s ease-out infinite;
+}
+@keyframes pulse{0%{transform:scale(.7); opacity:.36}100%{transform:scale(2.8); opacity:0}}
 
-    .quote-form button{
-      margin-top:8px;
-      padding:16px;
-      border-radius:12px;
-      border:none;
-      font-weight:700;
-      font-size:16px;
-      color:#001018;
-      cursor:pointer;
-      background:linear-gradient(90deg,#38bdf8,#0ea5e9);
-      transition:.25s;
-    }
-    .quote-form button:hover{
-      transform:translateY(-2px);
-      box-shadow:0 10px 30px rgba(14,165,233,.35);
-    }
-    .formStatus{
-      margin-top:10px;
-      font-size:14px;
-      text-align:center;
-      color:rgba(255,255,255,.82);
-      min-height:20px;
-    }
-    .ok{ color: rgba(120,255,190,.92); }
-    .bad{ color: rgba(255,140,140,.92); }
-
-    /* ==========================================
-       Footer
-       ========================================== */
-    footer{
-      padding:42px 0 60px;
-      color:rgba(255,255,255,.62);
-      border-top:1px solid rgba(255,255,255,.06);
-      margin-top:40px;
-    }
-    .footerRow{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:16px;
-      flex-wrap:wrap;
-    }
-    .mini{font-size:12px;color:rgba(255,255,255,.55);}
-
-    /* ==========================================
-       Responsive
-       ========================================== */
-    @media (max-width: 860px){
-      .navlinks{ display:none; }
-      .capsGrid{ grid-template-columns:1fr; }
-      .quote-form .row{ grid-template-columns:1fr; }
-      .quote-form{ padding:26px; }
-    }
-  </style>
+#mapSvg .scanHead{fill: rgba(255,255,255,.92); filter: drop-shadow(0 0 12px rgba(160,220,255,.12))}
+#mapSvg .scanTail{fill: rgba(255,255,255,.18)}
+#mapSvg .scanHead.airC{fill: rgba(255,255,255,.88)}
+#mapSvg .scanTail.airC{fill: rgba(255,255,255,.14)}
+#mapSvg .scanHead.landC{fill: rgba(190,255,220,.62)}
+#mapSvg .scanTail.landC{fill: rgba(190,255,220,.12)}
+</style>
 </head>
 
 <body>
 
-  <!-- NAV -->
-  <div class="nav">
-    <div class="wrap">
-      <a class="brand" href="#top" aria-label="AtlasFlow Home">
-        <span class="dot"></span>
-        <span>ATLASFLOW</span>
-      </a>
+<!-- Preloader -->
+<div id="preloader">
+  <div class="loaderWrap">
+    <div class="loaderRing"><div class="loaderDot"></div></div>
+    <div class="loaderText">AtlasFlow</div>
+  </div>
+</div>
 
-      <div class="navlinks" aria-label="Main navigation">
-        <a href="#services">Services</a>
-        <a href="#network">Network</a>
-        <a href="#contact">Contact</a>
-      </div>
+<!-- FX layers -->
+<div class="fx">
+  <div id="mapLayer">
+    <svg id="mapSvg" viewBox="0 0 1200 600" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="ocean" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#050b12"/>
+          <stop offset="0.55" stop-color="#07131c"/>
+          <stop offset="1" stop-color="#03070c"/>
+        </linearGradient>
+      </defs>
 
-      <button class="btn" type="button" onclick="scrollToQuote()">
-        Request a Quote
-      </button>
-    </div>
+      <rect width="1200" height="600" fill="url(#ocean)"/>
+
+      <g class="fog">
+        <circle cx="260" cy="140" r="260" fill="rgba(160,220,255,.040)"/>
+        <circle cx="420" cy="120" r="180" fill="rgba(255,255,255,.020)"/>
+        <circle cx="980" cy="420" r="320" fill="rgba(160,220,255,.030)"/>
+        <circle cx="990" cy="130" r="260" fill="rgba(255,255,255,.018)"/>
+        <circle cx="170" cy="470" r="300" fill="rgba(255,255,255,.015)"/>
+      </g>
+
+      <path id="graticulePath" class="graticule"></path>
+      <g id="landGroup"></g>
+      <path id="coastPath" class="coast"></path>
+      <path id="borderPath" class="borders"></path>
+
+      <path id="routeSea" class="route sea"></path>
+      <path id="routeAir" class="route air"></path>
+      <path id="routeLand" class="route land"></path>
+
+      <g id="scanSea">
+        <circle class="scanTail" r="2.1"></circle>
+        <circle class="scanTail" r="1.8"></circle>
+        <circle class="scanTail" r="1.5"></circle>
+        <circle class="scanHead" r="3.0"></circle>
+      </g>
+      <g id="scanAir">
+        <circle class="scanTail airC" r="2.1"></circle>
+        <circle class="scanTail airC" r="1.8"></circle>
+        <circle class="scanTail airC" r="1.5"></circle>
+        <circle class="scanHead airC" r="3.1"></circle>
+      </g>
+      <g id="scanLand">
+        <circle class="scanTail landC" r="2.0"></circle>
+        <circle class="scanTail landC" r="1.7"></circle>
+        <circle class="scanTail landC" r="1.4"></circle>
+        <circle class="scanHead landC" r="2.9"></circle>
+      </g>
+
+      <g id="hubs"></g>
+    </svg>
   </div>
 
-  <!-- HERO -->
-  <header class="hero" id="top">
-    <div class="transportLayer" aria-hidden="true">
-      <!-- SHIP -->
-      <div class="transport ship">
-        <svg viewBox="0 0 1200 220" fill="none">
-          <path class="t-fill" d="M70 160H980L1120 125L1140 150L980 195H110C86 195 70 180 70 160Z"/>
-          <path class="t-stroke" d="M70 160H980L1120 125L1140 150L980 195H110C86 195 70 180 70 160Z" stroke-width="2"/>
-          <path class="t-stroke" d="M210 150V80H830V150" stroke-width="2" opacity=".7"/>
-          <path class="t-stroke" d="M260 140V95H320V140" stroke-width="2" opacity=".55"/>
-          <path class="t-stroke" d="M340 140V95H400V140" stroke-width="2" opacity=".55"/>
-          <path class="t-stroke" d="M420 140V95H480V140" stroke-width="2" opacity=".55"/>
-          <path class="t-stroke" d="M500 140V95H560V140" stroke-width="2" opacity=".55"/>
-          <path class="t-stroke" d="M580 140V95H640V140" stroke-width="2" opacity=".55"/>
-          <path class="t-stroke" d="M660 140V95H720V140" stroke-width="2" opacity=".55"/>
-          <path class="t-stroke" d="M740 140V95H800V140" stroke-width="2" opacity=".55"/>
-          <path class="t-stroke" d="M860 160C905 162 935 172 955 192" stroke-width="2" opacity=".5"/>
-        </svg>
+  <canvas id="particles"></canvas>
+</div>
+
+<!-- Nav -->
+<header class="nav">
+  <div class="container navInner">
+    <div class="brand"><span class="brandMark"></span> ATLASFLOW</div>
+    <div class="navLinks">
+      <a href="#services">Services</a>
+      <a href="#network">Network</a>
+      <a href="#contact">Contact</a>
+      <a class="navCta" href="#contact">Request a Quote</a>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero" id="top">
+  <div class="heroGlow"></div>
+  <div class="heroGrid"></div>
+
+  <div class="container heroInner">
+    <div>
+      <div class="badge" aria-hidden="true">
+        <div class="globe">
+          <div class="globeLines"><span></span><span></span><span></span></div>
+        </div>
       </div>
 
-      <!-- PLANE -->
-      <div class="transport plane">
-        <svg viewBox="0 0 1200 220" fill="none">
-          <path class="t-stroke" d="M80 120H1120" stroke-width="2" opacity=".25"/>
-          <path class="t-fill" d="M330 120L590 90L620 70L650 90L980 120L650 130L620 150L590 130L330 120Z"/>
-          <path class="t-stroke" d="M330 120L590 90L620 70L650 90L980 120L650 130L620 150L590 130L330 120Z" stroke-width="2"/>
-          <path class="t-stroke" d="M590 90L560 50" stroke-width="2" opacity=".6"/>
-          <path class="t-stroke" d="M650 90L690 55" stroke-width="2" opacity=".6"/>
-          <path class="t-stroke" d="M590 130L560 175" stroke-width="2" opacity=".6"/>
-          <path class="t-stroke" d="M650 130L690 170" stroke-width="2" opacity=".6"/>
-        </svg>
+      <div class="kicker">Global Logistics • High-Trust Operations</div>
+      <h1 class="title" id="typeTitle"></h1>
+      <div class="subtitle">
+        Premium end-to-end cargo solutions across <b>EU</b>, <b>China</b> & <b>Thailand</b>.
+        Designed for enterprise clients who demand <b>reliability</b>, <b>visibility</b> and <b>control</b>.
       </div>
 
-      <!-- TRUCK -->
-      <div class="transport truck">
-        <svg viewBox="0 0 1200 220" fill="none">
-          <path class="t-fill" d="M180 140H820V70H180V140Z"/>
-          <path class="t-stroke" d="M180 140H820V70H180V140Z" stroke-width="2"/>
-          <path class="t-fill" d="M820 140H980V95H920L890 70H820V140Z"/>
-          <path class="t-stroke" d="M820 140H980V95H920L890 70H820V140Z" stroke-width="2"/>
-          <circle class="t-stroke" cx="270" cy="155" r="18" stroke-width="3" />
-          <circle class="t-stroke" cx="700" cy="155" r="18" stroke-width="3" />
-          <circle class="t-stroke" cx="900" cy="155" r="18" stroke-width="3" />
-          <path class="t-stroke" d="M200 90H800" stroke-width="2" opacity=".35"/>
-          <path class="t-stroke" d="M210 110H790" stroke-width="2" opacity=".25"/>
-        </svg>
+      <div class="heroBtns">
+        <a class="btn primary" href="#contact"><span class="iconDot"></span>Request logistics quote</a>
+        <a class="btn ghost" href="#services"><span class="iconDot"></span>Explore Services</a>
       </div>
     </div>
 
-    <div class="wrap">
-      <div class="heroTop">
-        <div class="smallcaps">GLOBAL LOGISTICS • HIGH-TRUST OPERATIONS</div>
-        <h1>AtlasFlow</h1>
+    <aside class="panel">
+      <div class="panelTitle">Enterprise-grade capabilities</div>
+      <div class="stats">
+        <div class="stat"><b>24/7</b><span>Dedicated coordination & updates</span></div>
+        <div class="stat"><b>SEA / AIR / LAND</b><span>Multimodal route planning</span></div>
+        <div class="stat"><b>Customs-ready</b><span>Documentation & compliance flow</span></div>
+        <div class="stat"><b>Priority lanes</b><span>Time-critical shipments support</span></div>
+      </div>
+      <div class="trustRow">
+        <div class="trustPill">Executive support</div>
+        <div class="trustPill">Risk control</div>
+        <div class="trustPill">Transparent process</div>
+        <div class="trustPill">Premium handling</div>
+      </div>
+    </aside>
+  </div>
+</section>
 
-        <p class="heroSub">
-          Premium end-to-end cargo solutions across <b>EU, China & Thailand</b>.
-          Designed for enterprise clients who demand <b>reliability</b>, <b>visibility</b> and <b>control</b>.
-        </p>
-
-        <div class="ctaRow">
-          <button class="btn primary" type="button" onclick="scrollToQuote()">
-            <span class="pill"></span> Request a VIP Quote
-          </button>
-          <a class="btn" href="#services">
-            <span class="pill"></span> Explore Services
-          </a>
-        </div>
-
-        <div class="card caps" style="margin-top:36px;">
-          <div class="capsTop">
-            <div class="smallcaps">ENTERPRISE-GRADE CAPABILITIES</div>
-          </div>
-
-          <div class="capsGrid">
-            <div class="capItem">
-              <strong>24/7</strong>
-              <div class="muted2">Dedicated coordination & updates</div>
-            </div>
-            <div class="capItem">
-              <strong>SEA / AIR / LAND</strong>
-              <div class="muted2">Multimodal route planning</div>
-            </div>
-            <div class="capItem">
-              <strong>Customs-ready</strong>
-              <div class="muted2">Documentation & compliance flow</div>
-            </div>
-            <div class="capItem">
-              <strong>Priority lanes</strong>
-              <div class="muted2">Time-critical shipments support</div>
-            </div>
-          </div>
-
-          <div class="capTags">
-            <span class="tag">Executive support</span>
-            <span class="tag">Risk control</span>
-            <span class="tag">Transparent process</span>
-            <span class="tag">Premium handling</span>
-          </div>
-        </div>
-
+<!-- Services -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="sectionHead">
+      <div>
+        <div class="kicker">Services</div>
+        <div class="h2">Luxury-level logistics. Built for scale.</div>
+      </div>
+      <div class="p">
+        We operate like a large company: clear responsibilities, predictable timelines,
+        proactive communication, and a premium client experience.
       </div>
     </div>
-  </header>
+    <div class="hr"></div>
 
-  <!-- NETWORK -->
-  <section class="section" id="network">
-    <div class="wrap">
-      <div class="sectionHead">
-        <div>
-          <div class="smallcaps">NETWORK</div>
-          <div class="sectionTitle">EU ⇄ China ⇄ Thailand — premium connectivity</div>
-          <p class="sectionDesc">
-            Solid routes (no dotted lines) and calm motion for an “enterprise” feel.
-            We show scale without noise.
-          </p>
+    <div class="grid3">
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">Air Cargo</div>
+          <div class="cardIcon"><i></i></div>
         </div>
+        <div class="cardTitle">Priority & time-critical air shipments</div>
+        <div class="cardText">Fast international delivery with route optimization, priority handling and status updates for business operations.</div>
       </div>
 
-      <div class="accordion">
-        <details open>
-          <summary>
-            <div class="sumLeft">
-              <div class="sumKicker">EU ⇄ THAILAND</div>
-              <div class="sumTitle">Consolidation & customs flow</div>
-            </div>
-            <div class="sumRight"></div>
-          </summary>
-          <div class="detailBody">
-            Predictable handoffs, documentation clarity, and managed delivery coordination.
-          </div>
-        </details>
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">Sea Freight</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Stable, cost-efficient sea transport</div>
+        <div class="cardText">Container solutions with controlled handoffs and documentation readiness from origin to destination.</div>
+      </div>
 
-        <details>
-          <summary>
-            <div class="sumLeft">
-              <div class="sumKicker">CHINA ⇄ EU</div>
-              <div class="sumTitle">Supplier pickup to destination</div>
-            </div>
-            <div class="sumRight"></div>
-          </summary>
-          <div class="detailBody">
-            From origin coordination to shipping and delivery support — structured operations.
-          </div>
-        </details>
-
-        <details>
-          <summary>
-            <div class="sumLeft">
-              <div class="sumKicker">CHINA ⇄ THAILAND</div>
-              <div class="sumTitle">Fast lanes for ecommerce & cargo</div>
-            </div>
-            <div class="sumRight"></div>
-          </summary>
-          <div class="detailBody">
-            Premium handling, clear timelines, and reliable communication throughout the route.
-          </div>
-        </details>
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">Land & Distribution</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Last-mile & regional distribution</div>
+        <div class="cardText">Warehousing, consolidation and local delivery coordination for clean, predictable delivery windows.</div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- SERVICES -->
-  <section class="section" id="services">
-    <div class="wrap">
-      <div class="sectionHead">
-        <div>
-          <div class="smallcaps">SERVICES</div>
-          <div class="sectionTitle">Luxury-level logistics. Built for scale.</div>
-          <p class="sectionDesc">
-            We operate like a large company: clear responsibilities, predictable timelines,
-            proactive communication, and a premium client experience.
-          </p>
-        </div>
+<!-- Network -->
+<section class="section" id="network">
+  <div class="container">
+    <div class="sectionHead">
+      <div>
+        <div class="kicker">Network</div>
+        <div class="h2">EU ⇄ China ⇄ Thailand — premium connectivity</div>
       </div>
-
-      <div class="accordion">
-        <details open>
-          <summary>
-            <div class="sumLeft">
-              <div class="sumKicker">AIR CARGO</div>
-              <div class="sumTitle">Priority & time-critical air shipments</div>
-            </div>
-            <div class="sumRight"></div>
-          </summary>
-          <div class="detailBody">
-            Fast international delivery with route optimization, priority handling and status updates for business operations.
-          </div>
-        </details>
-
-        <details>
-          <summary>
-            <div class="sumLeft">
-              <div class="sumKicker">SEA FREIGHT</div>
-              <div class="sumTitle">Stable, cost-efficient sea transport</div>
-            </div>
-            <div class="sumRight"></div>
-          </summary>
-          <div class="detailBody">
-            Container solutions with controlled handoffs and documentation readiness from origin to destination.
-          </div>
-        </details>
-
-        <details>
-          <summary>
-            <div class="sumLeft">
-              <div class="sumKicker">LAND & DISTRIBUTION</div>
-              <div class="sumTitle">Last-mile & regional distribution</div>
-            </div>
-            <div class="sumRight"></div>
-          </summary>
-          <div class="detailBody">
-            Warehousing, consolidation and local delivery coordination for clean, predictable delivery windows.
-          </div>
-        </details>
+      <div class="p">
+        Solid routes (no dotted lines) and calm motion for an “enterprise” feel.
+        We show scale without noise.
       </div>
-
     </div>
-  </section>
+    <div class="hr"></div>
 
-  <!-- CONTACT + FORM -->
-  <section class="section" id="contact">
-    <div class="wrap">
-      <div class="sectionHead">
-        <div>
-          <div class="smallcaps">CONTACT</div>
-          <div class="sectionTitle">Request a VIP logistics quote</div>
-          <p class="sectionDesc">
-            Share your route and shipment details — we’ll respond with a structured proposal.
-          </p>
+    <div class="grid3">
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">EU ⇄ Thailand</div>
+          <div class="cardIcon"><i></i></div>
         </div>
+        <div class="cardTitle">Consolidation & customs flow</div>
+        <div class="cardText">Predictable handoffs, documentation clarity, and managed delivery coordination.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">China ⇄ EU</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Supplier pickup to destination</div>
+        <div class="cardText">From origin coordination to shipping and delivery support — structured operations.</div>
+      </div>
+
+      <div class="card">
+        <div class="cardTop">
+          <div class="cardTag">China ⇄ Thailand</div>
+          <div class="cardIcon"><i></i></div>
+        </div>
+        <div class="cardTitle">Fast lanes for ecommerce & cargo</div>
+        <div class="cardText">Premium handling, clear timelines, and reliable communication throughout the route.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="container">
+    <div class="sectionHead">
+      <div>
+        <div class="kicker">Contact</div>
+        <div class="h2">Request logistics quote</div>
+      </div>
+      <div class="p">
+        Send route + cargo details and we’ll reply with options and pricing.
+      </div>
+    </div>
+    <div class="hr"></div>
+
+    <div class="contactBox">
+      <div class="left">
+        <b>Premium coordination — fast response</b>
+        <span>We answer with a structured plan: route, timing, and next steps.</span>
+      </div>
+      <div class="chips">
+        <a class="chip" href="mailto:info@atlasflow.org">info@atlasflow.org</a>
+        <a class="chip" href="#services">Services</a>
+        <a class="chip" href="#network">Network</a>
+        <a class="chip" href="#top">Top</a>
       </div>
     </div>
 
-    <div class="quote-section" id="quote">
-      <form class="quote-form" id="vipQuoteForm"
-            action="https://formspree.io/f/xbdwzwnq"
-            method="POST">
-        <h2>Request a VIP logistics quote</h2>
-        <p class="muted2">Corporate-grade service across EU, China & Thailand.</p>
+    <!-- Formspree form -->
+    <div class="formWrap" id="quote">
+      <div class="formTitle">Request logistics quote</div>
+      <div class="formSub">Corporate-grade service across EU, China & Thailand.</div>
 
-        <div class="row">
-          <input type="text" name="company" placeholder="Company name" required>
-          <input type="text" name="name" placeholder="Your name" required>
+      <form id="quoteForm" action="https://formspree.io/f/xbdywznq" method="POST">
+        <div class="formGrid">
+          <div class="field">
+            <label for="company">Company name</label>
+            <input class="input" id="company" name="company" type="text" placeholder="Company name" autocomplete="organization"/>
+          </div>
+
+          <div class="field">
+            <label for="name">Your name</label>
+            <input class="input" id="name" name="name" type="text" placeholder="Your name" autocomplete="name" required/>
+          </div>
+
+          <div class="field">
+            <label for="email">Email address</label>
+            <input class="input" id="email" name="email" type="email" placeholder="Email address" autocomplete="email" required/>
+          </div>
+
+          <div class="field">
+            <label for="route">Route</label>
+            <select class="select" id="route" name="route" required>
+              <option value="" disabled selected>Select route</option>
+              <option>EU ⇄ Thailand</option>
+              <option>China ⇄ EU</option>
+              <option>China ⇄ Thailand</option>
+              <option>Custom (describe in details)</option>
+            </select>
+          </div>
+
+          <div class="field" style="grid-column:1/-1">
+            <label for="details">Shipment details</label>
+            <textarea class="textarea" id="details" name="details" placeholder="Cargo type, weight/volume, pickup & destination, timeline" required></textarea>
+          </div>
+
+          <!-- Optional: subject (Formspree accepts extra fields) -->
+          <input type="hidden" name="_subject" value="Logistics Quote Request — AtlasFlow">
         </div>
 
-        <div class="row">
-          <input type="email" name="email" placeholder="Email address" required>
-          <input type="text" name="route" placeholder="Route (EU ↔ China / China ↔ Thailand)">
+        <div class="formActions">
+          <button class="submitBtn" type="submit">Send request</button>
+          <div class="formNote">We’ll reply with route options, timeline, and next steps.</div>
         </div>
 
-        <textarea name="details" placeholder="Shipment details (cargo type, weight/volume, pickup & destination, timeline)"></textarea>
-
-        <!-- optional hidden fields -->
-        <input type="hidden" name="_subject" value="AtlasFlow VIP Quote Request" />
-        <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-
-        <button type="submit">Send request</button>
-        <div class="formStatus" id="formStatus"></div>
+        <div id="formStatus" aria-live="polite"></div>
       </form>
     </div>
-  </section>
 
-  <footer>
-    <div class="wrap">
-      <div class="footerRow">
-        <div class="brand">
-          <span class="dot"></span><span>ATLASFLOW</span>
-        </div>
-        <div class="mini">© <span id="y"></span> AtlasFlow. Premium global logistics.</div>
-      </div>
-    </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    // year
-    document.getElementById('y').textContent = new Date().getFullYear();
+<footer class="footer">
+  © <span id="y"></span> AtlasFlow. All rights reserved.
+</footer>
 
-    // smooth scrolling to quote
-    function scrollToQuote(){
-      const el = document.getElementById('quote');
-      if(!el) return;
-      el.scrollIntoView({behavior:'smooth', block:'start'});
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+
+<script>
+/* ===== Preloader ===== */
+window.addEventListener('load', () => {
+  const p = document.getElementById('preloader');
+  setTimeout(()=>p.classList.add('hide'), 520);
+});
+
+/* ===== Year ===== */
+document.getElementById('y').textContent = new Date().getFullYear();
+
+/* ===== Typewriter (fast & elegant) ===== */
+const titleEl = document.getElementById("typeTitle");
+const titleText = "AtlasFlow";
+let i = 0;
+(function type(){
+  if(i <= titleText.length){
+    titleEl.textContent = titleText.slice(0, i);
+    i++;
+    setTimeout(type, 48);
+  }
+})();
+
+/* ===== Formspree AJAX submit (nice UX) ===== */
+const form = document.getElementById('quoteForm');
+const statusEl = document.getElementById('formStatus');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  statusEl.className = "";
+  statusEl.textContent = "Sending…";
+
+  try{
+    const data = new FormData(form);
+    const res = await fetch(form.action, {
+      method: "POST",
+      body: data,
+      headers: { "Accept": "application/json" }
+    });
+
+    if(res.ok){
+      form.reset();
+      statusEl.className = "ok";
+      statusEl.textContent = "✅ Sent. We’ll reply soon.";
+    }else{
+      const j = await res.json().catch(()=>null);
+      statusEl.className = "err";
+      statusEl.textContent = (j && j.errors && j.errors[0] && j.errors[0].message)
+        ? "❌ " + j.errors[0].message
+        : "❌ Something went wrong. Please try again.";
     }
+  }catch(err){
+    statusEl.className = "err";
+    statusEl.textContent = "❌ Network error. Please try again.";
+  }
+});
 
-    // Formspree AJAX (keeps your page, shows success)
-    (function(){
-      const form = document.getElementById('vipQuoteForm');
-      const status = document.getElementById('formStatus');
-      if(!form || !status) return;
+/* ===== Subtle particles ===== */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
 
-      form.addEventListener('submit', async function(e){
-        e.preventDefault();
-        status.className = 'formStatus';
-        status.textContent = 'Sending…';
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resize);
+resize();
 
-        try{
-          const fd = new FormData(form);
-          const res = await fetch(form.action, {
-            method: 'POST',
-            headers: { 'Accept': 'application/json' },
-            body: fd
-          });
+const PCOUNT = Math.min(34, Math.floor(window.innerWidth / 52));
+const ps = [];
+for(let k=0;k<PCOUNT;k++){
+  ps.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: 0.6 + Math.random()*1.1,
+    vx: -0.03 + Math.random()*0.06,
+    vy: -0.02 + Math.random()*0.04,
+    a: 0.018 + Math.random()*0.05
+  });
+}
+function tick(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(const p of ps){
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < -20) p.x = canvas.width+20;
+    if(p.x > canvas.width+20) p.x = -20;
+    if(p.y < -20) p.y = canvas.height+20;
+    if(p.y > canvas.height+20) p.y = -20;
 
-          if(res.ok){
-            status.className = 'formStatus ok';
-            status.textContent = '✅ Sent. We will contact you shortly.';
-            form.reset();
-          }else{
-            status.className = 'formStatus bad';
-            status.textContent = '⚠️ Error. Please try again or contact us via email.';
-          }
-        }catch(err){
-          status.className = 'formStatus bad';
-          status.textContent = '⚠️ Network error. Please try again.';
-        }
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${p.a})`;
+    ctx.fill();
+  }
+  requestAnimationFrame(tick);
+}
+tick();
+
+/* ===== REALISTIC MAP + SOLID routes + scan heads ===== */
+(async function(){
+  const W = 1200, H = 600;
+
+  const topoCountries = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json").then(r=>r.json());
+  const countries = topojson.feature(topoCountries, topoCountries.objects.countries);
+
+  const topoLand = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json").then(r=>r.json());
+  const land = topojson.feature(topoLand, topoLand.objects.land);
+
+  const projection = d3.geoEquirectangular().fitSize([W, H], {type:"Sphere"});
+  const geoPath = d3.geoPath(projection);
+
+  const gr = d3.geoGraticule10();
+  document.getElementById("graticulePath").setAttribute("d", geoPath(gr));
+
+  const landGroup = d3.select("#landGroup");
+  landGroup.selectAll("path")
+    .data(countries.features)
+    .join("path")
+    .attr("class","land")
+    .attr("d", geoPath);
+
+  document.getElementById("coastPath").setAttribute("d", geoPath(land));
+  const borders = topojson.mesh(topoCountries, topoCountries.objects.countries, (a,b)=>a!==b);
+  document.getElementById("borderPath").setAttribute("d", geoPath(borders));
+
+  // Hubs: EU (Hamburg), China (Shanghai), Thailand (Bangkok)
+  const HUBS = [
+    {name:"EU", lon: 9.99,  lat:53.55},
+    {name:"China", lon:121.47,lat:31.23},
+    {name:"Thailand", lon:100.50,lat:13.75},
+  ];
+
+  d3.select("#hubs").selectAll("g")
+    .data(HUBS)
+    .join("g")
+    .attr("transform", d=>{
+      const [x,y] = projection([d.lon,d.lat]);
+      return `translate(${x} ${y})`;
+    })
+    .each(function(){
+      const g = d3.select(this);
+      g.append("circle").attr("class","hub").attr("r",3.6);
+      g.append("circle").attr("class","pulse").attr("r",7.6);
+    });
+
+  function pt(lon,lat){
+    const [x,y] = projection([lon,lat]);
+    return {x,y};
+  }
+  const EU = pt(9.99,53.55);
+  const CN = pt(121.47,31.23);
+  const TH = pt(100.50,13.75);
+
+  function curve(a,b,bend){
+    const cx = (a.x+b.x)/2;
+    const cy = (a.y+b.y)/2 - bend;
+    return `M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${cx.toFixed(1)} ${cy.toFixed(1)}, ${cx.toFixed(1)} ${cy.toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
+  }
+
+  // solid routes (no dotted)
+  document.getElementById("routeSea").setAttribute("d",  curve(CN, EU, -18));
+  document.getElementById("routeAir").setAttribute("d",  curve(EU, TH,  58));
+  document.getElementById("routeLand").setAttribute("d", curve(CN, TH,  34));
+
+  function animateScan(pathId, groupId, durationMs, delayMs=0){
+    const pathEl = document.getElementById(pathId);
+    const g = document.getElementById(groupId);
+    if(!pathEl || !g) return;
+
+    const dots = g.querySelectorAll("circle");
+    const len = pathEl.getTotalLength();
+    const start = performance.now() + delayMs;
+
+    const back = [0.030, 0.060, 0.095, 0.0];
+    function frame(now){
+      const t = ((now - start) % durationMs + durationMs) % durationMs;
+      const p = t / durationMs;
+
+      dots.forEach((c, idx)=>{
+        const off = back[idx] || 0;
+        let pp = p - off;
+        if(pp < 0) pp += 1;
+        const pos = pathEl.getPointAtLength(pp * len);
+        c.setAttribute("cx", pos.x);
+        c.setAttribute("cy", pos.y);
+        if(idx < 3) c.setAttribute("opacity", String(0.18 - idx*0.05));
+        else c.setAttribute("opacity", "0.92");
       });
-    })();
-  </script>
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  animateScan("routeSea","scanSea", 11200, 380);
+  animateScan("routeAir","scanAir",  7800, 950);
+  animateScan("routeLand","scanLand", 9400, 620);
+})();
+</script>
 
 </body>
-           </html>
+  </html>
